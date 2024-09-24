@@ -5,6 +5,18 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Baby Sitter App"),
+      ),
+      body: Column(
+        children: [
+          Image.asset(
+            'assets/images/app-logo.png',
+            fit: BoxFit.cover,
+          )
+        ],
+      ),
+    );
   }
 }
