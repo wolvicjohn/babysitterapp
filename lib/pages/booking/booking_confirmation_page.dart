@@ -7,7 +7,7 @@ class BookingConfirmationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transaction History'),
+        title: const Text('Transaction History'),
       ),
       body: const Column(
         mainAxisAlignment: MainAxisAlignment.start,

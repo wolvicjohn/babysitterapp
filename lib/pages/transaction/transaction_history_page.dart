@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../transaction/transactionhistorydata.dart';
-import '../transaction/transactionhistorymodel.dart';
+import 'transaction_model/transactionhistorydata.dart';
+import 'transaction_model/transactionhistorymodel.dart';
 import 'transactioninfopage.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
+  const TransactionHistoryPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final Map<String, List<Transaction>> groupedTransactions = {};
@@ -13,13 +15,13 @@ class TransactionHistoryPage extends StatelessWidget {
     for (var transaction in transactions) {
       final String monthYear =
           DateFormat('MMMM yyyy').format(transaction.bookingDate);
-    
+
       if (groupedTransactions[monthYear] == null) {
         groupedTransactions[monthYear] = [];
       }
       groupedTransactions[monthYear]!.add(transaction);
     }
-    
+
     final sortedMonthKeys = groupedTransactions.keys.toList()
       ..sort((a, b) {
         final dateA = DateFormat('MMMM yyyy').parse(a);
@@ -37,8 +39,7 @@ class TransactionHistoryPage extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
-            const SizedBox(
-                width: 10),
+            const SizedBox(width: 10),
             const Text('Transaction History'),
           ],
         ),
@@ -49,7 +50,7 @@ class TransactionHistoryPage extends StatelessWidget {
           final String monthYear = sortedMonthKeys[index];
           final List<Transaction> monthTransactions =
               groupedTransactions[monthYear]!;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -86,24 +87,24 @@ class TransactionHistoryPage extends StatelessWidget {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           );
         },
       ),
     );
   }
+
   Widget statusIcon(String status) {
     if (status == 'Confirmed') {
       return const Icon(Icons.check_circle, color: Colors.purple);
     } else if (status == 'Cancelled') {
       return const Icon(Icons.cancel, color: Colors.grey);
     } else {
-      return const Icon(Icons.help_outline,
-          color: Colors.grey); 
+      return const Icon(Icons.help_outline, color: Colors.grey);
     }
   }
-  
+
   void _navigateToBabysitterDetails(BuildContext context, String babysitterName,
       String transactionId, DateTime bookingDate) {
     Navigator.push(
