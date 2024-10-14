@@ -1,3 +1,5 @@
+//NOTE: This is temporary message data
+
 import 'messages.dart';
 
 class MessageData {

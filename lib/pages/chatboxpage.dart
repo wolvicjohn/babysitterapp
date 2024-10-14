@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../controller/babysitter.dart';
-import '../controller/currentuser.dart';
-import '../controller/messagedata.dart';
-import '../controller/userdata.dart';
-import '../view/chatbox.dart';
+import '/controller/babysitter.dart';
+import '/controller/currentuser.dart';
+import '/controller/messagedata.dart';
+import '/controller/userdata.dart';
+import '/view/chatbox.dart';
 
 class ChatBoxPage extends StatefulWidget {
   final String babysitterId_;

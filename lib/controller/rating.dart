@@ -1,3 +1,5 @@
+//NOTE: This is temporary rating data fields
+
 class Rating {
   final String id;
   final int rating;

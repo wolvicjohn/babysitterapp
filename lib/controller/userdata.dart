@@ -1,3 +1,5 @@
+//NOTE: This is temporary user data
+
 import 'babysitter.dart';
 import 'currentuser.dart';
 import 'rating.dart';

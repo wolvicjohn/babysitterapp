@@ -1,3 +1,5 @@
+//NOTE: This is temporary babysitter data fields
+
 class Babysitter {
   final String email;
   final String name;

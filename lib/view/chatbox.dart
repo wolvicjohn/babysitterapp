@@ -1,12 +1,12 @@
-import 'package:babysitterapp/styles/colors.dart';
+import '/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import '../controller/babysitter.dart';
-import '../controller/currentuser.dart';
-import '../controller/messagedata.dart';
-import '../controller/messages.dart';
-import '../controller/userdata.dart';
+import '/controller/babysitter.dart';
+import '/controller/currentuser.dart';
+import '/controller/messagedata.dart';
+import '/controller/messages.dart';
+import '/controller/userdata.dart';
 
 class ChatBox extends StatefulWidget {
   final UserData userData;
@@ -45,6 +45,7 @@ class _ChatBoxState extends State<ChatBox> {
     super.dispose();
   }
 
+  //messages of the current user
   Widget userMessage(
           Messages messages, Babysitter babysitter, CurrentUser currentUser) =>
       InkWell(
@@ -66,6 +67,7 @@ class _ChatBoxState extends State<ChatBox> {
                     Radius.circular(20),
                   ),
                 ),
+                //check if the message is image or text
                 child: (messages.msg.contains('jpg'))
                     ? Image.asset(messages.msg)
                     : Text(
@@ -76,6 +78,7 @@ class _ChatBoxState extends State<ChatBox> {
         ),
       );
 
+  //messages of the babysitter
   Widget babySitterMessage(
           Messages messages, Babysitter babysitter, CurrentUser currentUser) =>
       InkWell(
@@ -104,6 +107,7 @@ class _ChatBoxState extends State<ChatBox> {
         ),
       );
 
+  //chat name above the chat message
   Widget chatName(
       Babysitter babysitter, Messages messages, CurrentUser currentUser) {
     bool isUser = babysitter.id == messages.id;
@@ -119,9 +123,11 @@ class _ChatBoxState extends State<ChatBox> {
     );
   }
 
+  //message line including profile picture
   Widget messageContent(
       Messages messages, Babysitter babysitter, CurrentUser currentUser) {
     bool isUser = messages.id == currentUser.id;
+    //check if the message line was from babysitter or current user
     return (isUser)
         ? Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -147,6 +153,7 @@ class _ChatBoxState extends State<ChatBox> {
           );
   }
 
+  //display the time message sent
   Widget showTime(Messages messages) => (messages.isClicked)
       ? Column(
           children: [
@@ -156,6 +163,7 @@ class _ChatBoxState extends State<ChatBox> {
         )
       : Container();
 
+  //box format for message
   Widget messageBox(
           Messages messages, Babysitter babysitter, CurrentUser accounts) =>
       Column(
@@ -166,6 +174,7 @@ class _ChatBoxState extends State<ChatBox> {
         ],
       );
 
+  //temporary chat messages
   Widget printMessage() {
     if (widget.babysitterId == 'sample') {
       return ListView(
@@ -193,29 +202,7 @@ class _ChatBoxState extends State<ChatBox> {
     }
   }
 
-  Widget userProfile() => Column(
-        children: [
-          const SizedBox(
-            height: 50,
-          ),
-          CircleAvatar(
-            radius: 70,
-            backgroundImage: AssetImage(widget.babysitter.img),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            widget.babysitter.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          )
-        ],
-      );
-
+  //store current user new message
   addMessage(CurrentUser currentUser) {
     Messages newMessage = Messages(
       id: currentUser.id,
@@ -239,6 +226,7 @@ class _ChatBoxState extends State<ChatBox> {
     });
   }
 
+  //scroll to most recent message
   scrollToBottom() {
     if (scrollController.hasClients) {
       scrollController.jumpTo(scrollController.position.maxScrollExtent);
@@ -252,6 +240,7 @@ class _ChatBoxState extends State<ChatBox> {
         Expanded(
           child: printMessage(),
         ),
+        //chat text field
         Row(
           children: [
             Expanded(

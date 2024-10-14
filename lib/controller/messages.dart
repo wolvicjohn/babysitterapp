@@ -1,3 +1,5 @@
+//NOTE: This is temporary messages data fields
+
 class Messages {
   final String id;
   final dynamic msg;

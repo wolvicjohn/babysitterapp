@@ -1,5 +1,6 @@
-import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/styles/colors.dart';
+import '/view/customwidget.dart';
+import '/components/button.dart';
+import '/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 class RatePage extends StatefulWidget {
@@ -10,6 +11,7 @@ class RatePage extends StatefulWidget {
 }
 
 class _RatePageState extends State<RatePage> {
+  CustomWidget customWidget = CustomWidget();
   final TextEditingController _feedbackController = TextEditingController();
   int _rating = 0;
 
@@ -33,7 +35,7 @@ class _RatePageState extends State<RatePage> {
       ),
       body: Center(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
+          margin: const EdgeInsets.symmetric(horizontal: 40),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -47,10 +49,17 @@ class _RatePageState extends State<RatePage> {
                   'Donna Martin',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: 24,
                   ),
                 ),
                 const SizedBox(height: 20),
+                const Text(
+                  'How was your experience with me',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
@@ -73,11 +82,12 @@ class _RatePageState extends State<RatePage> {
                 ),
                 const SizedBox(height: 20),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
-                      'Additional Comment',
+                      'Please share any additional feedback',
                       style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
                     TextField(
@@ -93,22 +103,28 @@ class _RatePageState extends State<RatePage> {
                 const SizedBox(height: 15),
                 AppButton(
                   onPressed: () {
+                    //display thankyou modal
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: customWidget.thankYouDialog(
+                            () {
+                              Navigator.popUntil(
+                                  context, (route) => route.isFirst);
+                            },
+                          ),
+                        );
+                      },
+                    );
                     setState(() {
                       _rating = 0;
                     });
+                    _feedbackController.clear();
                   },
                   text: 'Submit',
                 )
-                // ElevatedButton(
-                //   onPressed: () {
-                //     setState(() {
-                //       _rating = 0;
-                //     });
-                //   },
-                //   style: ElevatedButton.styleFrom(
-                //       backgroundColor: Colors.deepPurple),
-                //   child: const Text('SUBMIT'),
-                // ),
               ],
             ),
           ),

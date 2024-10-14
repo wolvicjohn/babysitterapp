@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../controller/babysitter.dart';
-import '../controller/messagedata.dart';
-import '../controller/userdata.dart';
+import '/controller/babysitter.dart';
+import '/controller/messagedata.dart';
+import '/controller/userdata.dart';
 import 'chatboxpage.dart';
 
 class ChatPage extends StatefulWidget {
@@ -26,16 +26,19 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
+  //check if the current user has previous conversation of the babysitter
   bool userHasMessages(String userID) {
     return messageData.sample.any((message) => message.id == userID) ||
         messageData.helloworld.any((message) => message.id == userID) ||
         messageData.hiearth.any((message) => message.id == userID);
   }
 
-  Widget userList(Babysitter babysitter) => InkWell(
+  //list of babysitter in the chat page
+  Widget babysitterList(Babysitter babysitter) => InkWell(
         onTap: () {
+          //check which babysitter is clicked by the current user
           setState(() {
-            babysitter.isClicked = (babysitter.isClicked) ? false : true;
+            babysitter.isClicked = !babysitter.isClicked;
 
             (babysitter.isClicked)
                 ? setState(() {
@@ -45,6 +48,7 @@ class _ChatPageState extends State<ChatPage> {
             babysitter.isClicked = false;
           });
 
+          //navigate to the chatbox of the clicked babysitter
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ChatBoxPage(babysitterId_: babysitterId),
           ));
@@ -91,7 +95,7 @@ class _ChatPageState extends State<ChatPage> {
         children: userData.babysitterList
             .where((babysitter) => userHasMessages(babysitter.id))
             .map((babysitter) {
-          return userList(babysitter);
+          return babysitterList(babysitter);
         }).toList(),
       ),
     );

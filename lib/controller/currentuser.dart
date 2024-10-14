@@ -1,3 +1,5 @@
+//NOTE: This is temporary current user data fields
+
 class CurrentUser {
   final String name;
   final String email;

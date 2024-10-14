@@ -1,13 +1,23 @@
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+//NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
+
 import '/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../controller/babysitter.dart';
-import '../controller/userdata.dart';
-import '../view/aboutheader.dart';
-import '../view/customwidget.dart';
-import '../view/experienceheader.dart';
-import '../view/feedbackheader.dart';
-import '../view/mainheader.dart';
+import '/controller/babysitter.dart';
+import '/controller/userdata.dart';
+import '/view/customwidget.dart';
 import 'chatboxpage.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -27,29 +37,35 @@ class _ProfilePageState extends State<ProfilePage> {
   late Babysitter babysitter;
   late double babysitterRating;
   late int noOfReviews;
+  late bool isExpanded;
 
   @override
   void initState() {
     super.initState();
+
+    //fetch babysitter data based on babysitterID
     babysitter = userData.babysitterList.firstWhere(
       (babysitter) => babysitter.id == widget.babysitterId,
     );
 
-    var userRatingsList = userData.ratingAndReviewList
+    //fetch no. of babysitter feedback
+    var babysitterRatingsList = userData.ratingAndReviewList
         .where((rating) => rating.id == widget.babysitterId)
         .toList();
 
-    if (userRatingsList.isNotEmpty) {
+    if (babysitterRatingsList.isNotEmpty) {
       double averageRating =
-          userRatingsList.map((r) => r.rating).reduce((a, b) => a + b) /
-              userRatingsList.length;
+          babysitterRatingsList.map((r) => r.rating).reduce((a, b) => a + b) /
+              babysitterRatingsList.length;
 
       babysitterRating = double.parse(averageRating.toStringAsFixed(1));
 
-      noOfReviews = userRatingsList.length;
+      noOfReviews = babysitterRatingsList.length;
     } else {
       babysitterRating = 0;
     }
+
+    isExpanded = false;
   }
 
   @override
@@ -68,6 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          //floating buttons at the bottom of the screen
           customWidget.floatingBtn(
             context,
             () {
@@ -110,34 +127,30 @@ class _ProfilePageState extends State<ProfilePage> {
               const Divider(
                 color: Color.fromARGB(255, 216, 216, 216),
               ),
-              MainHeader(
-                img: babysitter.img,
-                name: babysitter.name,
-                email: babysitter.email,
-                rating: babysitterRating,
-                reviewsNo: noOfReviews,
-                address:
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                rate: 200,
+              customWidget.mainHeader(
+                babysitter.img,
+                babysitter.name,
+                babysitter.email,
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                babysitterRating,
+                200,
+                noOfReviews,
               ),
-              const Divider(
-                color: Color.fromARGB(255, 216, 216, 216),
+              customWidget.myDivider(),
+              customWidget.aboutHeader(
+                babysitter.name.split(' ')[0],
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ac justo venenatis, sodales nisi ac, eleifend mi. Vestibulum nec augue porta, ultrices est in, posuere diam. In scelerisque id ante a placerat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse sagittis justo quis ante venenatis pretium. Etiam imperdiet lorem erat, sed mollis nulla aliquet in. Fusce gravida tempor ex at bibendum. Curabitur porttitor erat ac leo varius vestibulum. Vivamus dapibus massa est, vitae elementum nisl fringilla id. Nunc sit amet orci dui. Mauris convallis maximus ante, ac ullamcorper nibh iaculis vel. Cras pharetra scelerisque urna eleifend facilisis. Nullam in porttitor lorem. Nunc luctus vitae odio vel semper. Aliquam erat volutpat. Quisque sodales turpis quis accumsan mattis. Praesent bibendum risus eget enim aliquam vehicula sed nec odio. Fusce turpis augue, hendrerit sit amet vestibulum eget, dapibus eget diam. Suspendisse eget iaculis ante.',
+                isExpanded,
+                () {
+                  setState(() {
+                    isExpanded = !isExpanded;
+                  });
+                },
               ),
-              AboutHeader(
-                userFirstName: babysitter.name.split(' ')[0],
-                userAbout:
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ac justo venenatis, sodales nisi ac, eleifend mi. Vestibulum nec augue porta, ultrices est in, posuere diam. In scelerisque id ante a placerat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse sagittis justo quis ante venenatis pretium. Etiam imperdiet lorem erat, sed mollis nulla aliquet in. Fusce gravida tempor ex at bibendum. Curabitur porttitor erat ac leo varius vestibulum. Vivamus dapibus massa est, vitae elementum nisl fringilla id. Nunc sit amet orci dui. Mauris convallis maximus ante, ac ullamcorper nibh iaculis vel. Cras pharetra scelerisque urna eleifend facilisis. Nullam in porttitor lorem. Nunc luctus vitae odio vel semper. Aliquam erat volutpat. Quisque sodales turpis quis accumsan mattis. Praesent bibendum risus eget enim aliquam vehicula sed nec odio. Fusce turpis augue, hendrerit sit amet vestibulum eget, dapibus eget diam. Suspendisse eget iaculis ante.',
-              ),
-              const Divider(
-                color: Color.fromARGB(255, 216, 216, 216),
-              ),
-              ExperienceHeader(),
-              const Divider(
-                color: Color.fromARGB(255, 216, 216, 216),
-              ),
-              FeedbackHeader(
-                babysitterId_: widget.babysitterId,
-              ),
+              customWidget.myDivider(),
+              customWidget.experienceHeader(),
+              customWidget.myDivider(),
+              customWidget.feedbackHeader(widget.babysitterId)
             ],
           );
         },
