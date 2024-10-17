@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   intl: ^0.19.0
+  flutter_datetime_picker: ^1.5.1
   flutter:
     sdk: flutter
 

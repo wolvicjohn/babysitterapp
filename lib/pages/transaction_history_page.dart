@@ -10,16 +10,18 @@ class TransactionHistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, List<Transaction>> groupedTransactions = {};
 
+    // Grouping transactions by month and year
     for (var transaction in transactions) {
       final String monthYear =
           DateFormat('MMMM yyyy').format(transaction.bookingDate);
-    
+
       if (groupedTransactions[monthYear] == null) {
         groupedTransactions[monthYear] = [];
       }
       groupedTransactions[monthYear]!.add(transaction);
     }
-    
+
+    // Sorting the month keys
     final sortedMonthKeys = groupedTransactions.keys.toList()
       ..sort((a, b) {
         final dateA = DateFormat('MMMM yyyy').parse(a);
@@ -37,8 +39,7 @@ class TransactionHistoryPage extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
-            const SizedBox(
-                width: 10),
+            const SizedBox(width: 10),
             const Text('Transaction History'),
           ],
         ),
@@ -49,7 +50,7 @@ class TransactionHistoryPage extends StatelessWidget {
           final String monthYear = sortedMonthKeys[index];
           final List<Transaction> monthTransactions =
               groupedTransactions[monthYear]!;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -72,8 +73,25 @@ class TransactionHistoryPage extends StatelessWidget {
                       transaction.babysitterName,
                       transaction.transactionId,
                       transaction.bookingDate),
-                  child: Card(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal:
+                            8), // Add horizontal margin for better spacing
+                    decoration: BoxDecoration(
+                      color: Colors.white, // Background color for the container
+                      borderRadius:
+                          BorderRadius.circular(8.0), // Rounded corners
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset:
+                              const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
                     child: ListTile(
                       leading: statusIcon(transaction.status),
                       title: Text(
@@ -93,17 +111,19 @@ class TransactionHistoryPage extends StatelessWidget {
       ),
     );
   }
+
+  // Function to determine status icon
   Widget statusIcon(String status) {
     if (status == 'Confirmed') {
       return const Icon(Icons.check_circle, color: Colors.purple);
     } else if (status == 'Cancelled') {
       return const Icon(Icons.cancel, color: Colors.grey);
     } else {
-      return const Icon(Icons.help_outline,
-          color: Colors.grey); 
+      return const Icon(Icons.help_outline, color: Colors.grey);
     }
   }
-  
+
+  // Function to navigate to babysitter details
   void _navigateToBabysitterDetails(BuildContext context, String babysitterName,
       String transactionId, DateTime bookingDate) {
     Navigator.push(
