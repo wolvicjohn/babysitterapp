@@ -245,8 +245,7 @@ class _ChatBoxState extends State<ChatBox> {
           children: [
             Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextField(
                   controller: messageController,
                   decoration: InputDecoration(

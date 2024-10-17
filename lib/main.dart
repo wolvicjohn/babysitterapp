@@ -1,4 +1,6 @@
+import 'package:babysitterapp/pages/chatpage.dart';
 import 'package:babysitterapp/pages/home_page.dart';
+import 'package:babysitterapp/pages/ratepage.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Baby Sitter App',
       theme: ThemeClass.theme,
-      home: const MyHomePage(),
+      home: const ChatPage(),
     );
   }
 }

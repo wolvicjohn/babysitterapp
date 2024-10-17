@@ -6,7 +6,7 @@ class Babysitter {
   final String id;
   final String img;
   double rating;
-  bool isClicked;
+  bool? isClicked = false;
 
   Babysitter({
     required this.email,
@@ -14,6 +14,6 @@ class Babysitter {
     required this.id,
     required this.img,
     required this.rating,
-    required this.isClicked,
+    this.isClicked,
   });
 }

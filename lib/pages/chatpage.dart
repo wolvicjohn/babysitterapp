@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '/controller/babysitter.dart';
 import '/controller/messagedata.dart';
@@ -15,9 +16,12 @@ class _ChatPageState extends State<ChatPage> {
   UserData userData = UserData();
   MessageData messageData = MessageData();
   String babysitterId = '';
+  late bool isLongPressed;
+  List<String> selectedBabysitterId = [];
 
   @override
   void initState() {
+    isLongPressed = false;
     super.initState();
   }
 
@@ -36,29 +40,54 @@ class _ChatPageState extends State<ChatPage> {
   //list of babysitter in the chat page
   Widget babysitterList(Babysitter babysitter) => InkWell(
         onTap: () {
-          //check which babysitter is clicked by the current user
-          setState(() {
-            babysitter.isClicked = !babysitter.isClicked;
+          if (isLongPressed) {
+            setState(() {
+              //Add babysitter id to the selected list
+              selectedBabysitterId.add(babysitter.id);
+            });
+          } else {
+            // Check which babysitter is clicked by the current user
+            setState(() {
+              babysitter.isClicked = true;
 
-            (babysitter.isClicked)
-                ? setState(() {
-                    babysitterId = babysitter.id;
-                  })
-                : null;
-            babysitter.isClicked = false;
-          });
+              if (babysitter.isClicked!) {
+                babysitterId = babysitter.id;
+              }
+            });
 
-          //navigate to the chatbox of the clicked babysitter
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ChatBoxPage(babysitterId_: babysitterId),
-          ));
+            // Navigate to the chatbox of the clicked babysitter
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ChatBoxPage(babysitterId_: babysitterId),
+            ));
+          }
         },
-        onLongPress: () {},
+        onLongPress: () {
+          setState(() {
+            //Add babysitter id to the selected list
+            selectedBabysitterId.add(babysitter.id);
+            isLongPressed = true;
+          });
+        },
         child: Container(
           margin: const EdgeInsets.all(10),
           height: 60,
           child: Row(
             children: [
+              if (isLongPressed)
+                Checkbox(
+                  value: selectedBabysitterId.contains(babysitter.id),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        //Add babysitter id to the selected list
+                        selectedBabysitterId.add(babysitter.id);
+                      } else {
+                        //Remove babysitter id to the selected list
+                        selectedBabysitterId.remove(babysitter.id);
+                      }
+                    });
+                  },
+                ),
               CircleAvatar(
                 radius: 30,
                 backgroundImage: AssetImage(babysitter.img),
@@ -79,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                     Text(babysitter.email),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -88,9 +117,40 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Messages'),
-      ),
+      appBar: (isLongPressed)
+          ? AppBar(
+              title: Text('${selectedBabysitterId.length} Selected'),
+              leading: IconButton(
+                onPressed: () {
+                  setState(() {
+                    isLongPressed = false;
+                    selectedBabysitterId = [];
+                  });
+                },
+                icon: const Icon(CupertinoIcons.clear),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      print(selectedBabysitterId);
+                      isLongPressed = false;
+                      selectedBabysitterId = [];
+                    });
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              ],
+            )
+          : AppBar(
+              title: const Text('Messages'),
+              leading: IconButton(
+                onPressed: () {
+                  // Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+            ),
       body: ListView(
         children: userData.babysitterList
             .where((babysitter) => userHasMessages(babysitter.id))

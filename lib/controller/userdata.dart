@@ -19,7 +19,6 @@ class UserData {
       id: 'sample',
       img: 'assets/images/female1.jpg',
       rating: 0,
-      isClicked: false,
     ),
     Babysitter(
       email: 'anthonyparr@gmail.com',
@@ -27,7 +26,6 @@ class UserData {
       id: 'helloworld',
       img: 'assets/images/male2.jpg',
       rating: 0,
-      isClicked: false,
     ),
     Babysitter(
       email: 'carlgibson@gmail.com',
@@ -35,7 +33,6 @@ class UserData {
       id: 'hiearth',
       img: 'assets/images/male3.jpg',
       rating: 0,
-      isClicked: false,
     ),
     Babysitter(
       email: 'samanthabond.com',
@@ -43,7 +40,6 @@ class UserData {
       id: 'heymars',
       img: 'assets/images/female2.jpg',
       rating: 0,
-      isClicked: false,
     ),
   ];
 

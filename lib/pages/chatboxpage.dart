@@ -41,13 +41,25 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(babysitter.name),
+        leading: IconButton(
+          onPressed: () {
+            setState(() {
+              babysitter.isClicked = false;
+              Navigator.pop(context);
+            });
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
       ),
-      body: ChatBox(
-          userData: userData_,
-          messageData: messageData_,
-          babysitterId: widget.babysitterId_,
-          babysitter: babysitter,
-          currentUser: currentUser),
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        child: ChatBox(
+            userData: userData_,
+            messageData: messageData_,
+            babysitterId: widget.babysitterId_,
+            babysitter: babysitter,
+            currentUser: currentUser),
+      ),
     );
   }
 }
