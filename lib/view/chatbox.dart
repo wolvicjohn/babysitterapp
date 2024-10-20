@@ -72,7 +72,7 @@ class _ChatBoxState extends State<ChatBox> {
                     ? Image.asset(messages.msg)
                     : Text(
                         messages.msg,
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: primaryFgColor),
                       )),
           ],
         ),

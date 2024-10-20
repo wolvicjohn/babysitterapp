@@ -54,7 +54,7 @@ class _RatePageState extends State<RatePage> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'How was your experience with me',
+                  'How was your experience with me?',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

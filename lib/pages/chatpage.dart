@@ -1,3 +1,4 @@
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '/controller/babysitter.dart';
@@ -150,6 +151,19 @@ class _ChatPageState extends State<ChatPage> {
                 },
                 icon: const Icon(Icons.arrow_back),
               ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isLongPressed = true;
+                    });
+                  },
+                  child: const Text(
+                    'Select',
+                    style: TextStyle(color: primaryFgColor),
+                  ),
+                ),
+              ],
             ),
       body: ListView(
         children: userData.babysitterList

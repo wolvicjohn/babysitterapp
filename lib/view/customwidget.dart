@@ -127,7 +127,7 @@ class CustomWidget {
                 ),
                 Text(email),
                 Text(address),
-                Text('\$ $rate per hour for 1 child'),
+                Text('\$$rate per hour for 1 child'),
               ],
             ),
           ],
@@ -271,7 +271,7 @@ class CustomWidget {
           for (int x = 0; x < i; x++)
             Icon(
               Icons.star,
-              color: Colors.deepPurple,
+              color: primaryColor,
               size: size_,
             ),
           for (int y = 0; y < 5 - i; y++)
