@@ -43,8 +43,12 @@ class _ChatPageState extends State<ChatPage> {
         onTap: () {
           if (isLongPressed) {
             setState(() {
-              //Add babysitter id to the selected list
-              selectedBabysitterId.add(babysitter.id);
+              //Add or remove babysitter id to the selected list
+              if (selectedBabysitterId.contains(babysitter.id)) {
+                selectedBabysitterId.remove(babysitter.id);
+              } else {
+                selectedBabysitterId.add(babysitter.id);
+              }
             });
           } else {
             // Check which babysitter is clicked by the current user
@@ -56,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
               }
             });
 
-            // Navigate to the chatbox of the clicked babysitter
+            // Navigate to the chat box of the clicked babysitter
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => ChatBoxPage(babysitterId_: babysitterId),
             ));
@@ -74,6 +78,7 @@ class _ChatPageState extends State<ChatPage> {
           height: 60,
           child: Row(
             children: [
+              //if longpressed is true diplay the checkbox
               if (isLongPressed)
                 Checkbox(
                   value: selectedBabysitterId.contains(babysitter.id),
@@ -118,9 +123,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //Change Appbar content based on isLongPressed value
       appBar: (isLongPressed)
           ? AppBar(
               title: Text('${selectedBabysitterId.length} Selected'),
+              //cancel button
               leading: IconButton(
                 onPressed: () {
                   setState(() {
@@ -134,6 +141,7 @@ class _ChatPageState extends State<ChatPage> {
                 IconButton(
                   onPressed: () {
                     setState(() {
+                      //delete function
                       print(selectedBabysitterId);
                       isLongPressed = false;
                       selectedBabysitterId = [];

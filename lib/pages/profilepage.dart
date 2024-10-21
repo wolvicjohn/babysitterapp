@@ -63,6 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
       noOfReviews = babysitterRatingsList.length;
     } else {
       babysitterRating = 0;
+      noOfReviews = 0;
     }
 
     isExpanded = false;
@@ -150,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
               customWidget.myDivider(),
               customWidget.experienceHeader(),
               customWidget.myDivider(),
-              customWidget.feedbackHeader(widget.babysitterId)
+              customWidget.feedbackHeader(widget.babysitterId),
             ],
           );
         },

@@ -111,6 +111,7 @@ class _RatePageState extends State<RatePage> {
                         return Center(
                           child: customWidget.thankYouDialog(
                             () {
+                              //pop until landing page
                               Navigator.popUntil(
                                   context, (route) => route.isFirst);
                             },
