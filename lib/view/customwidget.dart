@@ -264,7 +264,7 @@ class CustomWidget {
           ],
         ),
       );
-
+  //rating star icon
   Widget ratingStar(i, double size_) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
