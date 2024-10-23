@@ -15,13 +15,13 @@ List<Transaction> transactions = [
   ),
   Transaction(
     transactionId: 'TXN123458',
-    babysitterName: 'Dick White',
+    babysitterName: 'Bay Be Si terr',
     bookingDate: DateTime(2024, 9, 25),
     status: 'Confirmed',
   ),
   Transaction(
     transactionId: 'WOLVIC123458',
-    babysitterName: 'Dick Black',
+    babysitterName: 'Redlick Black',
     bookingDate: DateTime(2024, 8, 25),
     status: 'Cancelled',
   ),
