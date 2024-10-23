@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Baby Sitter App',
-      theme: ThemeClass.theme,
-      home: const LocationPage(),
+        debugShowCheckedModeBanner: false,
+        title: 'Baby Sitter App',
+        theme: ThemeClass.theme,
+        home: const MyHomePage());
     );
   }
 }
