@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../styles/colors.dart'; // Import your color definitions
+import '../styles/colors.dart'; 
 
 class TransactionInfoPage extends StatelessWidget {
   final String babysitterName;

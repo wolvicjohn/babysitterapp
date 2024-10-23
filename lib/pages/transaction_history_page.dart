@@ -5,13 +5,25 @@ import '../transaction/transactionhistorydata.dart';
 import '../transaction/transactionhistorymodel.dart';
 import 'transactioninfopage.dart';
 
-class TransactionHistoryPage extends StatelessWidget {
+class TransactionHistoryPage extends StatefulWidget {
+  @override
+  _TransactionHistoryPageState createState() => _TransactionHistoryPageState();
+}
+
+class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
+  String selectedStatus = 'All'; // Default filter option
+
   @override
   Widget build(BuildContext context) {
     final Map<String, List<Transaction>> groupedTransactions = {};
 
     // Grouping transactions by month and year
     for (var transaction in transactions) {
+      // Filter transactions based on selected status
+      if (selectedStatus != 'All' && transaction.status != selectedStatus) {
+        continue; // Skip transactions that don't match the selected status
+      }
+
       final String monthYear =
           DateFormat('MMMM yyyy').format(transaction.bookingDate);
 
@@ -43,6 +55,27 @@ class TransactionHistoryPage extends StatelessWidget {
             const Text('Transaction History'),
           ],
         ),
+        actions: [
+          // Filter Dropdown
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: DropdownButton<String>(
+              value: selectedStatus,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedStatus = newValue!;
+                });
+              },
+              items: <String>['All', 'Confirmed', 'Cancelled']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: sortedMonthKeys.length,
@@ -59,7 +92,7 @@ class TransactionHistoryPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  monthYear,
+                  'As of $monthYear',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -69,26 +102,23 @@ class TransactionHistoryPage extends StatelessWidget {
               ...monthTransactions.map((transaction) {
                 return GestureDetector(
                   onTap: () => _navigateToBabysitterDetails(
-                      context,
-                      transaction.babysitterName,
-                      transaction.transactionId,
-                      transaction.bookingDate),
+                    context,
+                    transaction.babysitterName,
+                    transaction.transactionId,
+                    transaction.bookingDate,
+                  ),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 5,
-                        horizontal:
-                            8), // Add horizontal margin for better spacing
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white, // Background color for the container
-                      borderRadius:
-                          BorderRadius.circular(8.0), // Rounded corners
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.2),
                           spreadRadius: 1,
                           blurRadius: 5,
-                          offset:
-                              const Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
