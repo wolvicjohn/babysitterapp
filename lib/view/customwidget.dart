@@ -1,6 +1,10 @@
+import 'package:babysitterapp/controller/babysitter.dart';
+import 'package:babysitterapp/controller/currentuser.dart';
+import 'package:babysitterapp/controller/messagedata.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../controller/messages.dart';
 import '../styles/colors.dart';
 
 //temporary experience list
@@ -311,4 +315,102 @@ class CustomWidget {
           ],
         ),
       );
+
+  //message container
+  Widget messageContainer(bool isUser, Messages messages, Function() onTap_) =>
+      InkWell(
+        onTap: onTap_,
+        child: Container(
+            constraints: const BoxConstraints(maxWidth: 250),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: (isUser)
+                  ? primaryColor
+                  : const Color.fromARGB(255, 201, 201, 201),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
+              ),
+            ),
+            //check if the message is image or text
+            child: (messages.msg.contains('jpg'))
+                ? Image.asset(messages.msg)
+                : Text(
+                    messages.msg,
+                    style: (isUser)
+                        ? const TextStyle(color: primaryFgColor)
+                        : const TextStyle(color: textColor),
+                  )),
+      );
+
+  //Line of each message
+  Widget messageLine(bool isUser, Messages messages, CurrentUser currentUser,
+          Babysitter babysitter, Function() onTap) =>
+      Container(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          //check if the message is from user or baby sitter
+          crossAxisAlignment:
+              (isUser) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: (messages.isClicked) ? Text(messages.time) : Container(),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment:
+                  (isUser) ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: (isUser)
+                  ? [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          (messages.isClicked)
+                              ? Text(currentUser.name.split(' ').first)
+                              : Container(),
+                          messageContainer(isUser, messages, onTap),
+                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      CircleAvatar(
+                        backgroundImage: AssetImage(currentUser.img),
+                        radius: 20,
+                      ),
+                    ]
+                  : [
+                      CircleAvatar(
+                        backgroundImage: AssetImage(babysitter.img),
+                        radius: 20,
+                      ),
+                      const SizedBox(width: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          (messages.isClicked)
+                              ? Text(babysitter.name.split(' ').first)
+                              : Container(),
+                          messageContainer(isUser, messages, onTap),
+                        ],
+                      ),
+                    ],
+            ),
+          ],
+        ),
+      );
+
+  //fetch message list based on babysitterId_
+  List messageList(String babysitterId_, MessageData messageData) {
+    switch (babysitterId_) {
+      case 'sample':
+        return messageData.sample;
+
+      case 'helloworld':
+        return messageData.helloworld;
+
+      case 'hiearth':
+        return messageData.hiearth;
+
+      default:
+        return [];
+    }
+  }
 }

@@ -6,7 +6,7 @@ import 'rating.dart';
 
 class UserData {
   CurrentUser currentUser = CurrentUser(
-    name: 'Sebastian	Abraham',
+    name: 'Sebastian Abraham',
     email: 'sebastianabraham@gmail.com',
     id: 'sebastian123',
     img: 'assets/images/male1.jpg',
@@ -15,7 +15,7 @@ class UserData {
   List<Babysitter> babysitterList = [
     Babysitter(
       email: 'emmagill@gmail.com',
-      name: 'Emma	Gill',
+      name: 'Emma Gill',
       id: 'sample',
       img: 'assets/images/female1.jpg',
       rating: 0,
