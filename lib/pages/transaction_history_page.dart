@@ -13,7 +13,7 @@ class TransactionHistoryPage extends StatefulWidget {
 
 class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
   String selectedStatus = 'All';
-  String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +63,14 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           // Row for "Sort By" text and Dropdown Filter
           Container(
             decoration: BoxDecoration(
-              color: Colors.white, // Background color
-              borderRadius: BorderRadius.circular(8.0), // Rounded corners
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2), // Shadow color
-                  spreadRadius: 2, // Shadow spread radius
-                  blurRadius: 5, // Shadow blur radius
-                  offset: const Offset(0, 3), // Shadow position
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
