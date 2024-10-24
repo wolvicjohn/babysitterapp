@@ -1,3 +1,4 @@
+import 'package:babysitterapp/components/button.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmationPage extends StatelessWidget {
@@ -114,7 +115,7 @@ class ConfirmationPage extends StatelessWidget {
             SizedBox(
               height: 60,
               width: double.infinity,
-              child: ElevatedButton(
+              child: AppButton(
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -161,7 +162,7 @@ class ConfirmationPage extends StatelessWidget {
                     },
                   );
                 },
-                child: const Text('Confirm'),
+                text: 'Confirm',
               ),
             ),
             const SizedBox(height: 10),
