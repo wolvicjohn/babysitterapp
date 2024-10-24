@@ -7,12 +7,12 @@ class ConfirmationPage extends StatelessWidget {
   final String specialRequirements;
 
   const ConfirmationPage({
-    Key? key,
+    super.key,
     required this.babysitterName,
     required this.date,
     required this.time,
     required this.specialRequirements,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class ConfirmationPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height:30),
+            const SizedBox(height: 30),
             Center(
               child: Image.asset(
                 'assets/images/confirm.png',
@@ -44,11 +44,10 @@ class ConfirmationPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.white, 
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
                 boxShadow: [
                   BoxShadow(
@@ -60,87 +59,94 @@ class ConfirmationPage extends StatelessWidget {
                 ],
               ),
               child: Table(
-  columnWidths: const {
-    0: FixedColumnWidth(150),
-  },
-  children: [
-    TableRow(
-      children: [
-        const Text('Babysitter Name:', style: TextStyle(fontWeight: FontWeight.bold)),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0), // Add top padding for space
-          child: Text(babysitterName),
-        ),
-      ],
-    ),
-    TableRow(
-      children: [
-        const Text('Date:', style: TextStyle(fontWeight: FontWeight.bold)),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0), // Add top padding for space
-          child: Text(date),
-        ),
-      ],
-    ),
-    TableRow(
-      children: [
-        const Text('Time:', style: TextStyle(fontWeight: FontWeight.bold)),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0), // Add top padding for space
-          child: Text(time),
-        ),
-      ],
-    ),
-    TableRow(
-      children: [
-        const Text('Special Requirements:', style: TextStyle(fontWeight: FontWeight.bold)),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0), // Add top padding for space
-          child: Text(specialRequirements),
-        ),
-      ],
-    ),
-  ],
-),
-
+                columnWidths: const {
+                  0: FixedColumnWidth(150),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      const Text('Babysitter Name:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 8.0), // Add top padding for space
+                        child: Text(babysitterName),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      const Text('Date:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 8.0), // Add top padding for space
+                        child: Text(date),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      const Text('Time:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 8.0), // Add top padding for space
+                        child: Text(time),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      const Text('Special Requirements:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 8.0), // Add top padding for space
+                        child: Text(specialRequirements),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 30),
-            Container(
+            SizedBox(
               height: 60,
-              width: double.infinity, 
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                 
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text('Confirm Booking'),
-                        content: const Text('Are you sure you want to confirm this booking?'),
+                        content: const Text(
+                            'Are you sure you want to confirm this booking?'),
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); 
+                              Navigator.of(context).pop();
                             },
                             child: const Text('Cancel'),
                           ),
                           TextButton(
                             onPressed: () {
-                              
-                              Navigator.of(context).pop(); 
+                              Navigator.of(context).pop();
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text('Booking Confirmed'),
-                                    content: const Text('Your booking has been confirmed successfully!'),
+                                    content: const Text(
+                                        'Your booking has been confirmed successfully!'),
                                     actions: [
                                       TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); 
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
                                         },
-                                      child: Center( 
-                                        child: const Text('OK'),
+                                        child: const Center(
+                                          child: Text('OK'),
                                         ),
                                       ),
                                     ],
@@ -158,15 +164,15 @@ class ConfirmationPage extends StatelessWidget {
                 child: const Text('Confirm'),
               ),
             ),
-            const SizedBox(height: 10), 
+            const SizedBox(height: 10),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Center( 
-                child: const Text(
+              child: const Center(
+                child: Text(
                   'Cancel',
-                  style: TextStyle(color: Colors.grey), 
+                  style: TextStyle(color: Colors.grey),
                 ),
               ),
             ),
