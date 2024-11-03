@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../services/location.dart';
 import '../../services/location_service.dart';
 
 class SetLocation extends StatefulWidget {
@@ -15,6 +14,8 @@ class SetLocation extends StatefulWidget {
 }
 
 class _SetLocationState extends State<SetLocation> {
+  LocationService locationService = LocationService();
+
   double latitude = 0;
   double longitude = 0;
 
@@ -31,8 +32,6 @@ class _SetLocationState extends State<SetLocation> {
 
   @override
   Widget build(BuildContext context) {
-    LocationService locationService = LocationService();
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -129,7 +128,7 @@ class _SetLocationState extends State<SetLocation> {
 
   // tag users location
   Future<void> _getUserLocation() async {
-    final pos = await determinePosition();
+    final pos = await locationService.determinePosition();
     setState(() {
       latitude = pos.latitude;
       longitude = pos.longitude;
