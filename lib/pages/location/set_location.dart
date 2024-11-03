@@ -1,18 +1,20 @@
 import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/models/location.dart';
 import 'package:babysitterapp/styles/size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class LocationPage extends StatefulWidget {
-  const LocationPage({super.key});
+import '../../services/location.dart';
+import '../../services/location_service.dart';
+
+class SetLocation extends StatefulWidget {
+  const SetLocation({super.key});
 
   @override
-  State<LocationPage> createState() => _LocationPageState();
+  State<SetLocation> createState() => _SetLocationState();
 }
 
-class _LocationPageState extends State<LocationPage> {
+class _SetLocationState extends State<SetLocation> {
   double latitude = 0;
   double longitude = 0;
 
@@ -29,6 +31,8 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   Widget build(BuildContext context) {
+    LocationService locationService = LocationService();
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -82,7 +86,29 @@ class _LocationPageState extends State<LocationPage> {
               ],
             ),
             Positioned(
-              bottom: 20,
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: sizeConfig.widthSize(context),
+                  height: 50,
+                  child: FutureBuilder(
+                    future: locationService
+                        .getAddressFromCoordinates(LatLng(latitude, longitude)),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading...');
+                      }
+                      return Text(snapshot.data.toString());
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 15,
               left: 0,
               right: 0,
               child: Column(
