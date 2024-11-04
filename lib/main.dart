@@ -1,5 +1,5 @@
 import 'package:babysitterapp/pages/home_page.dart';
-import 'package:babysitterapp/pages/location/set_location.dart';
+import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +16,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Baby Sitter App',
         theme: ThemeClass.theme,
-        home: const SetLocation());
+        home: const BabysitterViewLocation());
   }
 }
