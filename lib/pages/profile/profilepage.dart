@@ -12,6 +12,8 @@
 //NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
 //NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
 // BABYSITTER PROFILE
+import 'package:babysitterapp/pages/booking%20request/requestpage.dart';
+
 import '../../views/customwidget.dart';
 import '/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +24,7 @@ import '../chat/chatboxpage.dart';
 
 class ProfilePage extends StatefulWidget {
   final String babysitterId;
+
   const ProfilePage({
     super.key,
     required this.babysitterId,
@@ -106,7 +109,14 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           customWidget.floatingBtn(
             context,
-            () {},
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookingRequestPage(),
+                ),
+              );
+            },
             primaryColor,
             primaryColor,
             const Icon(

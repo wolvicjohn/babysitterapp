@@ -17,6 +17,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Baby Sitter App',
         theme: ThemeClass.theme,
-        home: const MyHomePage());
+        home: MyHomePage());
   }
 }
