@@ -34,7 +34,7 @@ class SettingsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Profile section
+
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: const BoxDecoration(
@@ -43,7 +43,7 @@ class SettingsPage extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Profile image
+
                   ClipOval(
                     child: Container(
                       width: 60,
@@ -59,9 +59,9 @@ class SettingsPage extends StatelessWidget {
 
                   const SizedBox(width: 16),
 
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Digong',
                         style: TextStyle(
@@ -91,7 +91,8 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             ),
-            // General section
+
+
             SettingsSection(
               title: 'GENERAL',
               items: [
@@ -99,18 +100,13 @@ class SettingsPage extends StatelessWidget {
                     icon: Icons.person,
                     label: 'My Profile',
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => const MyProfilePage(),
-                      ));
+
                     }),
                 SettingsItem(
                     icon: Icons.notifications,
                     label: 'Notifications',
                     onTap: () {
 
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
-                      ));
                     }),
                 SettingsItem(
                     icon: Icons.receipt_long,
@@ -138,7 +134,8 @@ class SettingsPage extends StatelessWidget {
                     }),
               ],
             ),
-            // About & Terms section
+
+
             SettingsSection(
               title: 'SUPPORT & TERMS',
               items: [
@@ -162,7 +159,8 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            // Notifications section
+
+
             const SettingsSection(
               title: 'NOTIFICATIONS',
               items: [
@@ -243,27 +241,4 @@ class SettingsSwitchItem extends StatelessWidget {
   }
 }
 
-// Dummy pages for navigation
-class MyProfilePage extends StatelessWidget {
-  const MyProfilePage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('My Profile')),
-      body: const Center(child: Text('Profile Page Content')),
-    );
-  }
-}
-
-class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
-      body: const Center(child: Text('Notifications Page Content')),
-    );
-  }
-}
