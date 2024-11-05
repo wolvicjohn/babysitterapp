@@ -4,16 +4,22 @@ import 'package:intl/intl.dart';
 import '../confirmation/confirmpage.dart';
 
 class BookingRequestPage extends StatefulWidget {
-  final String babysitterImage; 
+  final String babysitterImage;
+  final String babysitterName;
 
-  BookingRequestPage({Key? key, required this.babysitterImage}) : super(key: key);
+  BookingRequestPage({
+    Key? key,
+    required this.babysitterImage,
+    required this.babysitterName,
+  }) : super(key: key);
 
   @override
   _BookingRequestPageState createState() => _BookingRequestPageState();
 }
 
 class _BookingRequestPageState extends State<BookingRequestPage> {
-  final TextEditingController _specialRequirementsController = TextEditingController();
+  final TextEditingController _specialRequirementsController =
+      TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
@@ -66,13 +72,28 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ConfirmationPage(
-          babysitterName: 'Carlo Velvestre',
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ConfirmationPage(
+          babysitterName: widget.babysitterName,
           date: formattedDate,
           time: formattedTime,
           specialRequirements: _specialRequirementsController.text,
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
       ),
     );
   }
@@ -90,11 +111,19 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
           children: [
             const Divider(color: Color(0xFFD8D8D8)),
             const SizedBox(height: 20),
-            
+
             // Display the babysitter profile image
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.babysitterImage),
-              radius: 50,
+            Column(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.babysitterImage),
+                  radius: 50,
+                ),
+                Text(
+                  widget.babysitterName,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
             ),
 
             const SizedBox(height: 20),
@@ -148,7 +177,8 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                   ElevatedButton(
                     onPressed: _submitBooking,
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),

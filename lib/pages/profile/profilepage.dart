@@ -113,8 +113,10 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      BookingRequestPage(babysitterImage: babysitter.img),
+                  builder: (context) => BookingRequestPage(
+                    babysitterImage: babysitter.img,
+                    babysitterName: babysitter.name,
+                  ),
                 ),
               );
             },
