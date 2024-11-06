@@ -1,9 +1,17 @@
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../confirmation/confirmpage.dart';
 
 class BookingRequestPage extends StatefulWidget {
-  const BookingRequestPage({super.key});
+  final String babysitterImage;
+  final String babysitterName;
+
+  const BookingRequestPage({
+    super.key,
+    required this.babysitterImage,
+    required this.babysitterName,
+  });
 
   @override
   _BookingRequestPageState createState() => _BookingRequestPageState();
@@ -15,16 +23,24 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
-  // Format the selected date
+  // New state to track selected days
+  final Map<String, bool> _selectedDays = {
+    'Monday': true,
+    'Tuesday': true,
+    'Wednesday': false,
+    'Thursday': false,
+    'Friday': false,
+    'Saturday': false,
+    'Sunday': false,
+  };
+
   String get formattedDate => _selectedDate != null
       ? DateFormat.yMMMMd().format(_selectedDate!)
       : 'Select Date';
 
-  // Format the selected time
   String get formattedTime =>
       _selectedTime != null ? _selectedTime!.format(context) : 'Select Time';
 
-  // Open the date picker
   Future<void> _pickDate() async {
     DateTime? picked = await showDatePicker(
       context: context,
@@ -33,26 +49,20 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
       lastDate: DateTime(2100),
     );
     if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
+      setState(() => _selectedDate = picked);
     }
   }
 
-  // Open the time picker
   Future<void> _pickTime() async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
-      setState(() {
-        _selectedTime = picked;
-      });
+      setState(() => _selectedTime = picked);
     }
   }
 
-  // Handle booking submission
   void _submitBooking() {
     if (_selectedDate == null || _selectedTime == null) {
       showDialog(
@@ -66,22 +76,41 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
               child: const Text('OK'),
             ),
           ],
-          icon: const SizedBox(height: 20),
         ),
       );
       return;
     }
 
-    // Navigate to ConfirmationPage
+    // Get selected days as a string
+    String selectedDaysString = _selectedDays.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .join(', ');
+
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ConfirmationPage(
-          babysitterName: 'Carlo Velvestre',
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ConfirmationPage(
+          babysitterName: widget.babysitterName,
           date: formattedDate,
           time: formattedTime,
           specialRequirements: _specialRequirementsController.text,
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
       ),
     );
   }
@@ -91,95 +120,126 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Booking'),
-        centerTitle: true,
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Image.asset(
-                'assets/images/form.png',
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
-              const SizedBox(height: 20),
+        child: Column(
+          children: [
+            const Divider(color: Color(0xFFD8D8D8)),
+            const SizedBox(height: 20),
 
-              // Booking Form
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(12.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+            // Display the babysitter profile image
+            Column(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.babysitterImage),
+                  radius: 50,
                 ),
-                child: Column(
-                  children: [
-                    // Date Picker Section
-                    _buildPickerSection(
-                      title: 'Select Date',
-                      value: formattedDate,
-                      icon: Icons.calendar_today,
-                      onTap: _pickDate,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Time Picker Section
-                    _buildPickerSection(
-                      title: 'Select Time',
-                      value: formattedTime,
-                      icon: Icons.access_time,
-                      onTap: _pickTime,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Special Requirements Section
-                    TextField(
-                      controller: _specialRequirementsController,
-                      decoration: InputDecoration(
-                        labelText: 'Special Requirements',
-                        hintText: 'Enter any special requirements',
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        filled: true,
-                        fillColor: Theme.of(context).cardColor,
-                      ),
-                      maxLines: 3,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Submit Button
-                    ElevatedButton(
-                      onPressed: _submitBooking,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                      ),
-                      child: const Text('Submit'),
-                    ),
-                  ],
+                Text(
+                  widget.babysitterName,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // booking form container
+            Container(
+              margin: const EdgeInsetsDirectional.symmetric(horizontal: 10),
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-            ],
-          ),
+              child: Column(
+                children: [
+                  _buildPickerSection(
+                    title: 'Select Date',
+                    value: formattedDate,
+                    icon: Icons.calendar_today,
+                    onTap: _pickDate,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildPickerSection(
+                    title: 'Select Time',
+                    value: formattedTime,
+                    icon: Icons.access_time,
+                    onTap: _pickTime,
+                  ),
+                  const SizedBox(height: 16),
+                  // Availability selector
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Available Days',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        ..._selectedDays.keys.map((day) {
+                          // Only display days that are selected
+                          return _selectedDays[day] == true
+                              ? ListTile(
+                                  leading: const Icon(Icons.check,
+                                      color: Colors.green),
+                                  title: Text(day,
+                                      style:
+                                          const TextStyle(color: Colors.black)),
+                                )
+                              : const SizedBox.shrink();
+                        }),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _specialRequirementsController,
+                    decoration: InputDecoration(
+                      labelText: 'Special Requirements',
+                      hintText: 'Enter any special requirements',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(context).cardColor,
+                    ),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _submitBooking,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    child: const Text('Submit'),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

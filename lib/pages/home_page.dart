@@ -1,4 +1,3 @@
-import 'package:babysitterapp/pages/booking%20request/requestpage.dart';
 import 'package:babysitterapp/pages/profile/profilepage.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,7 @@ class MyHomePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: const Text(
+              child: Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
@@ -36,7 +35,7 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TransactionHistoryPage(),
+                    builder: (context) => const TransactionHistoryPage(),
                   ),
                 );
               },
