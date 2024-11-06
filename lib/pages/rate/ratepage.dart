@@ -29,7 +29,10 @@ class _RatePageState extends State<RatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rate Babysitter'),
+        title: const Text(
+          'Rate Babysitter',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: backgroundColor,
         foregroundColor: textColor,
       ),
@@ -86,7 +89,7 @@ class _RatePageState extends State<RatePage> {
                   children: [
                     const Text(
                       'Please share any additional feedback',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),

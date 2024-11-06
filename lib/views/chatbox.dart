@@ -1,3 +1,5 @@
+import 'package:babysitterapp/components/textfield.dart';
+
 import '/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -235,6 +237,14 @@ class _ChatBoxState extends State<ChatBox> {
 
   @override
   Widget build(BuildContext context) {
+    var sendButton = IconButton(
+      onPressed: () {
+        addMessage(widget.currentUser);
+        messageController.clear();
+      },
+      icon: const Icon(CupertinoIcons.paperplane_fill),
+    );
+
     return Column(
       children: [
         Expanded(
@@ -246,21 +256,10 @@ class _ChatBoxState extends State<ChatBox> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: TextField(
+                child: AppTextField(
                   controller: messageController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    hintText: 'Message',
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        addMessage(widget.currentUser);
-                        messageController.clear();
-                      },
-                      icon: const Icon(CupertinoIcons.paperplane_fill),
-                    ),
-                  ),
+                  hintText: 'Message',
+                  suffix: sendButton,
                 ),
               ),
             ),
