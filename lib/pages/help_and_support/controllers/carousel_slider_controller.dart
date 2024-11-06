@@ -1,3 +1,3 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-class CarouselSliderController extends CarouselController {}
+// class CarouselSliderController extends CarouselController {}

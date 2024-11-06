@@ -28,18 +28,19 @@ class _SearchPageState extends State<SearchPage> {
         }
         _showAutocomplete = false;
 
-        _searchResults = _allBabysitters.where((result) =>
-        result.name.toLowerCase().contains(value.toLowerCase()) ||
-            result.bio.toLowerCase().contains(value.toLowerCase()) ||
-            result.skills.any((skill) => skill.toLowerCase().contains(value.toLowerCase()))
-        ).toList();
+        _searchResults = _allBabysitters
+            .where((result) =>
+                result.name.toLowerCase().contains(value.toLowerCase()) ||
+                result.bio.toLowerCase().contains(value.toLowerCase()) ||
+                result.skills.any((skill) =>
+                    skill.toLowerCase().contains(value.toLowerCase())))
+            .toList();
 
         _showResults = true;
         _noResultsFound = _searchResults.isEmpty;
       }
     });
   }
-
 
   void _onSearchChanged(String value) {
     setState(() {
@@ -48,9 +49,10 @@ class _SearchPageState extends State<SearchPage> {
         _showResults = false;
 
         //autocomplete suggestions
-        _searchResults = _allBabysitters.where((result) =>
-            result.name.toLowerCase().contains(value.toLowerCase())
-        ).toList();
+        _searchResults = _allBabysitters
+            .where((result) =>
+                result.name.toLowerCase().contains(value.toLowerCase()))
+            .toList();
       } else {
         _showAutocomplete = false;
       }
@@ -115,20 +117,20 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(
             child: _showResults
                 ? SearchResultsWidget(
-              searchResults: _searchResults,
-              onLabelClick: _onLabelClick,
-              noResultsFound: _noResultsFound,
-            )
+                    searchResults: _searchResults,
+                    onLabelClick: _onLabelClick,
+                    noResultsFound: _noResultsFound,
+                  )
                 : _showAutocomplete
-                ? AutocompleteWidget(
-              searchResults: _searchResults,
-              onLabelClick: _onLabelClick,
-            )
-                : DefaultListWidget(
-              searchHistory: _searchHistory,
-              onHistoryItemClick: _onHistoryItemClick,
-              onClearHistory: _clearSearchHistory,
-            ),
+                    ? AutocompleteWidget(
+                        searchResults: _searchResults,
+                        onLabelClick: _onLabelClick,
+                      )
+                    : DefaultListWidget(
+                        searchHistory: _searchHistory,
+                        onHistoryItemClick: _onHistoryItemClick,
+                        onClearHistory: _clearSearchHistory,
+                      ),
           ),
         ],
       ),

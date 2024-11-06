@@ -73,8 +73,7 @@ class HelpAndSupportPage extends StatelessWidget {
                         question: faq.question,
                         answer: faq.answer,
                       );
-                    }).toList(),
-
+                    }),
                     const SizedBox(height: 16.0),
                     const ContactSupport(),
                     const SafetyAndPrivacy(),
