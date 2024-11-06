@@ -12,6 +12,8 @@
 //NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
 //NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -79,8 +81,17 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(babysitter.name),
-        backgroundColor: backgroundColor,
+        backgroundColor: tertiaryColor,
         foregroundColor: textColor,
+        actions: [
+          IconButton(
+            onPressed: () {
+              final Uri phoneUri = Uri(scheme: 'tel', path: babysitter.phone);
+              launchUrl(phoneUri);
+            },
+            icon: const Icon(Icons.phone),
+          ),
+        ],
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -89,6 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
           customWidget.floatingBtn(
             context,
             () {
+              //navigate to chatbox page
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -106,7 +118,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           customWidget.floatingBtn(
             context,
-            () {},
+            () {
+              //book babysitter function
+            },
             primaryColor,
             primaryColor,
             const Icon(
@@ -125,19 +139,16 @@ class _ProfilePageState extends State<ProfilePage> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Divider(
-                color: Color.fromARGB(255, 216, 216, 216),
-              ),
               customWidget.mainHeader(
                 babysitter.img,
                 babysitter.name,
                 babysitter.email,
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                babysitter.address,
+                babysitter.age,
                 babysitterRating,
                 200,
                 noOfReviews,
               ),
-              customWidget.myDivider(),
               customWidget.aboutHeader(
                 babysitter.name.split(' ')[0],
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ac justo venenatis, sodales nisi ac, eleifend mi. Vestibulum nec augue porta, ultrices est in, posuere diam. In scelerisque id ante a placerat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse sagittis justo quis ante venenatis pretium. Etiam imperdiet lorem erat, sed mollis nulla aliquet in. Fusce gravida tempor ex at bibendum. Curabitur porttitor erat ac leo varius vestibulum. Vivamus dapibus massa est, vitae elementum nisl fringilla id. Nunc sit amet orci dui. Mauris convallis maximus ante, ac ullamcorper nibh iaculis vel. Cras pharetra scelerisque urna eleifend facilisis. Nullam in porttitor lorem. Nunc luctus vitae odio vel semper. Aliquam erat volutpat. Quisque sodales turpis quis accumsan mattis. Praesent bibendum risus eget enim aliquam vehicula sed nec odio. Fusce turpis augue, hendrerit sit amet vestibulum eget, dapibus eget diam. Suspendisse eget iaculis ante.',

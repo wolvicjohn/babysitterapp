@@ -52,12 +52,11 @@ class _RatePageState extends State<RatePage> {
                     fontSize: 24,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 const Text(
                   'How was your experience with me?',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
                   ),
                 ),
                 Row(
@@ -80,25 +79,53 @@ class _RatePageState extends State<RatePage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Text(
-                      'Please share any additional feedback',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                    InkWell(
+                      onTap: () {
+                        //add photo function
+                      },
+                      child: const Column(
+                        children: [
+                          Icon(
+                            Icons.photo,
+                            size: 70,
+                          ),
+                          Text(
+                            'Add Photo',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: _feedbackController,
-                      maxLines: 5,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter your comment',
+                    InkWell(
+                      onTap: () {
+                        //add video function
+                      },
+                      child: const Column(
+                        children: [
+                          Icon(
+                            Icons.video_camera_back,
+                            size: 70,
+                          ),
+                          Text(
+                            'Add Video',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _feedbackController,
+                  maxLines: 5,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Please share any additional feedback.',
+                  ),
                 ),
                 const SizedBox(height: 15),
                 AppButton(

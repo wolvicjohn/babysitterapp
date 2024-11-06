@@ -28,11 +28,13 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
   late CurrentUser currentUser = userData.currentUser;
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
+  late String selectedOffer;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
+    selectedOffer = userData.offerList.first;
   }
 
   //fetch messages
@@ -54,7 +56,7 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
         return Column(
           children: [
             customWidget.messageLine(
-                isUser, messages, currentUser, babysitter, onTap)
+                isUser, messages, currentUser, babysitter, onTap),
           ],
         );
       }).toList(),
@@ -62,10 +64,10 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
   }
 
   //store current user new message
-  addMessage() {
+  addMessage(String message) {
     Messages newMessage = Messages(
       id: currentUser.id,
-      msg: messageController.text,
+      msg: message,
       time: '10:59 pm',
       isClicked: false,
     );
@@ -122,12 +124,68 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   hintText: 'Message',
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      addMessage();
-                      messageController.clear();
-                    },
-                    icon: const Icon(CupertinoIcons.paperplane_fill),
+                  suffixIcon: SizedBox(
+                    width: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            //send offer function
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return OfferModal(
+                                      iconOnPressed: () {
+                                        setState(() {
+                                          selectedOffer =
+                                              userData.offerList.first;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      children: userData.offerList.map((offer) {
+                                        return RadioListTile<String>(
+                                          title: Text('PHP $offer/hr'),
+                                          value: offer,
+                                          groupValue: selectedOffer,
+                                          onChanged: (String? value) {
+                                            setState(() {
+                                              selectedOffer = value!;
+                                            });
+                                          },
+                                        );
+                                      }).toList(),
+                                      buttonOnPressed: () {
+                                        addMessage(
+                                            'Offer: PHP $selectedOffer/hr');
+                                        setState(() {
+                                          selectedOffer =
+                                              userData.offerList.first;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.local_offer),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            //add message function
+                            if (messageController.text.isNotEmpty) {
+                              addMessage(messageController.text);
+                            }
+                            messageController.clear();
+                          },
+                          icon: const Icon(CupertinoIcons.paperplane_fill),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

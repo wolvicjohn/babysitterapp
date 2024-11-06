@@ -1,3 +1,4 @@
+import 'package:babysitterapp/components/button.dart';
 import 'package:babysitterapp/controller/babysitter.dart';
 import 'package:babysitterapp/controller/currentuser.dart';
 import 'package:babysitterapp/controller/messagedata.dart';
@@ -81,57 +82,87 @@ class CustomWidget {
     String name,
     String email,
     String address,
+    int age,
     double rating,
     int rate,
     int reviewsNo,
   ) =>
       Container(
-        margin: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: tertiaryColor,
+          boxShadow: [
+            BoxShadow(
+              offset: const Offset(0, 5),
+              color: textColor.withOpacity(.1),
+              blurRadius: 12,
+            ),
+          ],
+          borderRadius:
+              const BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
                   backgroundImage: AssetImage(img),
-                  radius: 70,
+                  backgroundColor: primaryColor,
+                  radius: 80,
                 ),
-                const SizedBox(width: 20),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        ratingStar(rating.toInt(), 30),
-                        Text(rating.toString()),
-                      ],
-                    ),
-                    Text(
-                      '$reviewsNo reviews',
-                      style: const TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text('26 Families Served')
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(height: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                const SizedBox(height: 20),
                 Text(
-                  name,
+                  '$name, $age',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: 20,
                   ),
                 ),
-                Text(email),
                 Text(address),
-                Text('\$$rate per hour for 1 child'),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ratingStar(rating.toInt(), 30),
+                    Text(rating.toString()),
+                  ],
+                ),
+                Text(
+                  '$reviewsNo reviews',
+                  style: const TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text('26 Families Served'),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Column(
+                      children: [
+                        Text('Availabilty'),
+                        Text(
+                          'MWF',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, letterSpacing: 4),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text('Hourly rate'),
+                        Text(
+                          'PHP $rate/hr',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
@@ -332,14 +363,12 @@ class CustomWidget {
               ),
             ),
             //check if the message is image or text
-            child: (messages.msg.contains('jpg'))
-                ? Image.asset(messages.msg)
-                : Text(
-                    messages.msg,
-                    style: (isUser)
-                        ? const TextStyle(color: primaryFgColor)
-                        : const TextStyle(color: textColor),
-                  )),
+            child: Text(
+              messages.msg,
+              style: (isUser)
+                  ? const TextStyle(color: primaryFgColor)
+                  : const TextStyle(color: textColor),
+            )),
       );
 
   //Line of each message
@@ -412,5 +441,52 @@ class CustomWidget {
       default:
         return [];
     }
+  }
+}
+
+class OfferModal extends StatelessWidget {
+  final Function() iconOnPressed;
+  final List<Widget> children;
+  final Function() buttonOnPressed;
+  const OfferModal({
+    super.key,
+    required this.iconOnPressed,
+    required this.children,
+    required this.buttonOnPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 400,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          AppBar(
+            backgroundColor: backgroundColor,
+            foregroundColor: textColor,
+            title: const Text('Send offer'),
+            leading: IconButton(
+              onPressed: iconOnPressed,
+              icon: const Icon(Icons.clear),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: children,
+                ),
+                AppButton(
+                  onPressed: buttonOnPressed,
+                  text: 'Send Offer',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
