@@ -1,5 +1,6 @@
-import 'package:babysitterapp/pages/home_page.dart';
-import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
+import 'package:babysitterapp/authentication/landing_page.dart';
+import 'package:babysitterapp/authentication/login_page.dart';
+import 'package:babysitterapp/authentication/register_page.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +14,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Baby Sitter App',
-        theme: ThemeClass.theme,
-        home: const BabysitterViewLocation());
+      debugShowCheckedModeBanner: false,
+      title: 'Baby Sitter App',
+      theme: ThemeClass.theme,
+      home: const BabySitterLandingPage(),
+      routes: {
+        '/login': (context) => const BabySitterLoginPage(),
+        '/register': (context) => const BabySitterRegisterPage(),
+      },
+    );
   }
 }
