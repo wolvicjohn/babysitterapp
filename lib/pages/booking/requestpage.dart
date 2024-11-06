@@ -1,5 +1,3 @@
-import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/components/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../confirmation/confirmpage.dart';
@@ -147,17 +145,35 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                     const SizedBox(height: 16),
 
                     // Special Requirements Section
-                    AppTextField(
+                    TextField(
                       controller: _specialRequirementsController,
-                      hintText: 'Enter any special requirements',
+                      decoration: InputDecoration(
+                        labelText: 'Special Requirements',
+                        hintText: 'Enter any special requirements',
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).cardColor,
+                      ),
+                      maxLines: 3,
                     ),
 
                     const SizedBox(height: 24),
 
                     // Submit Button
-                    AppButton(
+                    ElevatedButton(
                       onPressed: _submitBooking,
-                      text: 'Submit',
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      child: const Text('Submit'),
                     ),
                   ],
                 ),
