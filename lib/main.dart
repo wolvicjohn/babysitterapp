@@ -1,3 +1,5 @@
+import 'package:babysitterapp/pages/booking/requestpage.dart';
+import 'package:babysitterapp/pages/home_page.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Baby Sitter App',
         theme: ThemeClass.theme,
-        home: const TransactionHistoryPage());
+        home: const MyHomePage());
   }
 }
