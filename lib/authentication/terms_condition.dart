@@ -13,7 +13,7 @@ class TermsConditionsDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: accentColor,
+          color: secondaryColor,
           borderRadius: BorderRadius.circular(20.0),
         ),
         height: 500.0,

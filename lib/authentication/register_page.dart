@@ -1,3 +1,4 @@
+import 'package:babysitterapp/components/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/utils/authentication.dart';
@@ -243,13 +244,10 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
                     _phoneNumber = value;
                   },
                   decoration: InputDecoration(
-                    hintText: "Phone Number",
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                      hintText: "Phone Number",
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                      border: outlineBorder),
                 ),
                 const SizedBox(height: 20),
                 // checkbox for terms and conditions
@@ -294,28 +292,18 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
                 const SizedBox(height: 30),
                 // register button
                 SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Add register logic
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        // Implement your sign-up logic here
-                        signUserUp();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(fontSize: 18, color: Colors.black),
-                    ),
-                  ),
-                ),
+                    width: double.infinity,
+                    child: AppButton(
+                      text: "Register",
+                      onPressed: () {
+                        // Add register logic
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          // Implement your sign-up logic here
+                          signUserUp();
+                        }
+                      },
+                    )),
                 const SizedBox(height: 30),
                 const Row(
                   children: <Widget>[
