@@ -1,3 +1,4 @@
+import 'package:babysitterapp/components/textfield.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -211,19 +212,22 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  TextField(
-                    controller: _specialRequirementsController,
-                    decoration: InputDecoration(
-                      labelText: 'Special Requirements',
+                  AppTextField(
                       hintText: 'Enter any special requirements',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                    ),
-                    maxLines: 3,
-                  ),
+                      controller: _specialRequirementsController),
+                  // TextField(
+                  //   controller: _specialRequirementsController,
+                  //   decoration: InputDecoration(
+                  //     labelText: 'Special Requirements',
+                  //     hintText: 'Enter any special requirements',
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(8.0),
+                  //     ),
+                  //     filled: true,
+                  //     fillColor: Theme.of(context).cardColor,
+                  //   ),
+                  //   maxLines: 3,
+                  // ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _submitBooking,

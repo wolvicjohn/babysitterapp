@@ -1,3 +1,6 @@
+import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/styles/colors.dart';
+import 'package:babysitterapp/styles/size.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/utils/authentication.dart';
@@ -42,24 +45,27 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // styles
+    var inputDecoration = InputDecoration(
+      hintText: "Email Address",
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.8),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+    );
+
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: secondaryColor,
       body: SingleChildScrollView(
-        // Add SingleChildScrollView here
-        child: Form(
-          key: _formKey,
-          child: Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFFB39DDB), Color(0xFF9575CD)],
-              ),
-            ),
+        child: SizedBox(
+          height: sizeConfig.heightSize(context),
+          child: Form(
+            key: _formKey,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 100),
                   const Text.rich(
@@ -86,25 +92,16 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                   const SizedBox(height: 30),
                   // Email field
                   TextFormField(
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _email = value;
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Email Address',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _email = value;
+                      },
+                      decoration: inputDecoration),
                   const SizedBox(height: 20),
                   // Password field
                   TextFormField(
@@ -119,8 +116,7 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                       _password = value;
                     },
                     decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: const TextStyle(color: Colors.grey),
+                      hintText: "Password",
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.8),
                       suffixIcon: IconButton(
@@ -137,7 +133,7 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                         },
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                     ),
                   ),
@@ -157,27 +153,17 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                   const SizedBox(height: 10),
                   // Login button
                   SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          // Implement your sign in logic here
-                          signUserIn();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 18, color: Colors.black),
-                      ),
-                    ),
-                  ),
+                      width: double.infinity,
+                      child: AppButton(
+                        text: "Login",
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            // Implement your sign in logic here
+                            signUserIn();
+                          }
+                        },
+                      )),
                   const SizedBox(height: 50),
                   const Row(
                     children: <Widget>[
@@ -189,7 +175,7 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                         ),
                       ),
                       Text(
-                        'Or Login with',
+                        'or login with',
                         style: TextStyle(color: Colors.white),
                       ),
                       Expanded(
@@ -243,7 +229,9 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 140),
+
+                  const Spacer(),
+
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, '/register');

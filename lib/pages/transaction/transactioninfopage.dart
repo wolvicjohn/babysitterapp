@@ -8,11 +8,11 @@ class TransactionInfoPage extends StatelessWidget {
   final DateTime bookingDate;
 
   const TransactionInfoPage({
-    Key? key,
+    super.key,
     required this.babysitterName,
     required this.transactionId,
     required this.bookingDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

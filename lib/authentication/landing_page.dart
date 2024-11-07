@@ -1,3 +1,4 @@
+import 'package:babysitterapp/components/button.dart';
 import 'package:flutter/material.dart';
 
 class BabySitterLandingPage extends StatefulWidget {
@@ -44,61 +45,37 @@ class _BabySitterLandingPageState extends State<BabySitterLandingPage> {
             const SizedBox(height: 40),
             // Login button
             SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isLoginButtonPressed = true;
-                  });
-                  Navigator.pushNamed(context, '/login').then((_) {
+                width: 250,
+                child: AppButton(
+                  text: "Login",
+                  onPressed: () {
                     setState(() {
-                      isLoginButtonPressed = false;
+                      isLoginButtonPressed = true;
                     });
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isLoginButtonPressed
-                      ? const Color(0xFFB388FF)
-                      : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-              ),
-            ),
+                    Navigator.pushNamed(context, '/login').then((_) {
+                      setState(() {
+                        isLoginButtonPressed = false;
+                      });
+                    });
+                  },
+                )),
             const SizedBox(height: 20),
             // Register button
             SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isRegisterButtonPressed = true;
-                  });
-                  Navigator.pushNamed(context, '/register').then((_) {
+                width: 250,
+                child: AppButton(
+                  text: "Register",
+                  onPressed: () {
                     setState(() {
-                      isRegisterButtonPressed = false;
+                      isRegisterButtonPressed = true;
                     });
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isRegisterButtonPressed
-                      ? const Color(0xFFB388FF)
-                      : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Register',
-                  style: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-              ),
-            ),
+                    Navigator.pushNamed(context, '/register').then((_) {
+                      setState(() {
+                        isRegisterButtonPressed = false;
+                      });
+                    });
+                  },
+                )),
           ],
         ),
       ),

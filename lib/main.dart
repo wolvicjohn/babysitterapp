@@ -1,7 +1,6 @@
 import 'package:babysitterapp/authentication/landing_page.dart';
 import 'package:babysitterapp/authentication/login_page.dart';
 import 'package:babysitterapp/authentication/register_page.dart';
-import 'package:babysitterapp/pages/home_page.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
 import 'package:flutter/material.dart';
 

@@ -46,7 +46,8 @@ class UserDetailsPage extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.location_on, color: Colors.red, size: 16),
+                          const Icon(Icons.location_on,
+                              color: Colors.red, size: 16),
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
@@ -82,9 +83,7 @@ class UserDetailsPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton.icon(
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                   icon: Icon(Icons.call, color: colorScheme.onPrimary),
                   label: const Text("Call"),
                   style: ElevatedButton.styleFrom(
@@ -188,14 +187,16 @@ class UserDetailsPage extends StatelessWidget {
               onPressed: () {
                 // Book Now action
               },
-              child: Text('+ Book Now', style: TextStyle(color: colorScheme.onPrimary)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
+              child: Text('+ Book Now',
+                  style: TextStyle(color: colorScheme.onPrimary)),
             ),
           ],
         ),
@@ -210,18 +211,26 @@ class UserDetailsPage extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: isActive
             ? LinearGradient(
-          colors: [colorScheme.primary, colorScheme.secondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        )
+                colors: [colorScheme.primary, colorScheme.secondary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
             : LinearGradient(
-          colors: [colorScheme.surface.withOpacity(0.7), colorScheme.surface],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+                colors: [
+                  colorScheme.surface.withOpacity(0.7),
+                  colorScheme.surface
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: isActive
-            ? [BoxShadow(color: colorScheme.secondary.withOpacity(0.3), blurRadius: 10, offset: Offset(0, 4))]
+            ? [
+                BoxShadow(
+                    color: colorScheme.secondary.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4))
+              ]
             : [],
       ),
       child: Text(

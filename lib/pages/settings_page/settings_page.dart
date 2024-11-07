@@ -23,10 +23,7 @@ class SettingsPage extends StatelessWidget {
             icon: const Icon(Icons.search),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => SearchPage()
-                )
-              );
+                  MaterialPageRoute(builder: (context) => const SearchPage()));
             },
           ),
         ],
@@ -34,21 +31,20 @@ class SettingsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: const BoxDecoration(
                 color: primaryColor,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
               child: Row(
                 children: [
-
                   ClipOval(
                     child: Container(
                       width: 60,
                       height: 60,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/profile/digong.jpg'),
                           fit: BoxFit.cover,
@@ -56,9 +52,7 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(width: 16),
-
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -91,51 +85,27 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             ),
-
-
             SettingsSection(
               title: 'GENERAL',
               items: [
                 SettingsItem(
-                    icon: Icons.person,
-                    label: 'My Profile',
-                    onTap: () {
-
-                    }),
+                    icon: Icons.person, label: 'My Profile', onTap: () {}),
                 SettingsItem(
                     icon: Icons.notifications,
                     label: 'Notifications',
-                    onTap: () {
-
-                    }),
+                    onTap: () {}),
                 SettingsItem(
                     icon: Icons.receipt_long,
                     label: 'Transaction History',
-                    onTap: () {
-
-                    }),
+                    onTap: () {}),
                 SettingsItem(
-                    icon: Icons.account_circle,
-                    label: 'Account',
-                    onTap: () {
-
-                    }),
+                    icon: Icons.account_circle, label: 'Account', onTap: () {}),
                 SettingsItem(
-                    icon: Icons.payment,
-                    label: 'Payment',
-                    onTap: () {
-
-                    }),
+                    icon: Icons.payment, label: 'Payment', onTap: () {}),
                 SettingsItem(
-                    icon: Icons.location_on,
-                    label: 'Location',
-                    onTap: () {
-
-                    }),
+                    icon: Icons.location_on, label: 'Location', onTap: () {}),
               ],
             ),
-
-
             SettingsSection(
               title: 'SUPPORT & TERMS',
               items: [
@@ -143,24 +113,17 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.devices,
                   label: 'Help and Support',
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => HelpAndSupportPage()
-                      )
-                    );
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const HelpAndSupportPage()));
                   },
                 ),
                 SettingsItem(
                   icon: Icons.privacy_tip,
                   label: 'Terms and Conditions/Privacy Policy',
-                  onTap: () {
-
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
-
-
             const SettingsSection(
               title: 'NOTIFICATIONS',
               items: [
@@ -210,14 +173,19 @@ class SettingsItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const SettingsItem({super.key, required this.icon, required this.label, required this.onTap});
+  const SettingsItem(
+      {super.key,
+      required this.icon,
+      required this.label,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(icon, color: primaryColor),
       title: Text(label),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing:
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: onTap,
     );
   }
@@ -240,5 +208,3 @@ class SettingsSwitchItem extends StatelessWidget {
     );
   }
 }
-
-
