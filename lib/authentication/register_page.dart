@@ -1,3 +1,4 @@
+import 'package:babysitterapp/authentication/terms_condition.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/utils/authentication.dart';
@@ -288,7 +289,12 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
                               decorationColor: Colors.white,
                             ),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () {
+                              ..onTap = () async {
+                                await showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      const TermsConditionsDialog(),
+                                );
                                 // Navigator.pushNamed(context, '/terms');
                               },
                           ),
