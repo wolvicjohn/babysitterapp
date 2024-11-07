@@ -12,7 +12,7 @@ class AppButton extends StatelessWidget {
     var buttonStyle = ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)));
     var textStyle = const TextStyle(fontWeight: FontWeight.w500);
-    var padding = const EdgeInsets.symmetric(horizontal: 15);
+    var padding = const EdgeInsets.symmetric(horizontal: 10);
 
     return Padding(
       padding: padding,
