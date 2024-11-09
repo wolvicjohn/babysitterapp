@@ -1,8 +1,10 @@
-import 'package:babysitterapp/components/textfield.dart';
-import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../../components/button.dart';
+import '../../components/textfield.dart';
+import '../../styles/colors.dart';
 import '../confirmation/confirmpage.dart';
+import 'availability.dart';
+import 'time_selector.dart';
 
 class BookingRequestPage extends StatefulWidget {
   final String babysitterImage;
@@ -21,10 +23,6 @@ class BookingRequestPage extends StatefulWidget {
 class _BookingRequestPageState extends State<BookingRequestPage> {
   final TextEditingController _specialRequirementsController =
       TextEditingController();
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-
-  // New state to track selected days
   final Map<String, bool> _selectedDays = {
     'Monday': true,
     'Tuesday': true,
@@ -35,54 +33,13 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     'Sunday': false,
   };
 
-  String get formattedDate => _selectedDate != null
-      ? DateFormat.yMMMMd().format(_selectedDate!)
-      : 'Select Date';
+  // New field for selected time
+  String? _selectedTime = 'Morning'; // Default time
 
-  String get formattedTime =>
-      _selectedTime != null ? _selectedTime!.format(context) : 'Select Time';
-
-  Future<void> _pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
-    }
-  }
-
-  Future<void> _pickTime() async {
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() => _selectedTime = picked);
-    }
-  }
+  String? _paymentTiming = 'Before Service'; // Default to 'Before Service'
+  String? _paymentMode = 'GCash'; // Default payment mode
 
   void _submitBooking() {
-    if (_selectedDate == null || _selectedTime == null) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Missing Information'),
-          content: const Text('Please select both a date and time.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-
-    // Get selected days as a string
     String selectedDaysString = _selectedDays.entries
         .where((entry) => entry.value)
         .map((entry) => entry.key)
@@ -94,9 +51,10 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
         pageBuilder: (context, animation, secondaryAnimation) =>
             ConfirmationPage(
           babysitterName: widget.babysitterName,
-          date: formattedDate,
-          time: formattedTime,
           specialRequirements: _specialRequirementsController.text,
+          selectedTime: _selectedTime ?? 'Morning',
+          paymentTiming: _paymentTiming ?? 'Before Service',
+          paymentMode: _paymentMode ?? 'GCash',
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(0.0, 1.0);
@@ -116,6 +74,13 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     );
   }
 
+  // Callback to handle selected time
+  void _onTimeSelected(String selectedTime) {
+    setState(() {
+      _selectedTime = selectedTime;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,24 +94,82 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
           children: [
             const Divider(color: Color(0xFFD8D8D8)),
             const SizedBox(height: 20),
-
-            // Display the babysitter profile image
             Column(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(widget.babysitterImage),
+                  backgroundImage: AssetImage(widget.babysitterImage),
                   radius: 50,
                 ),
+                const SizedBox(height: 16),
                 Text(
                   widget.babysitterName,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
-            // booking form container
+            // Babysitter details container
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Column(
+                children: [
+                  Text(
+                    'Babysitter Details',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on),
+                      SizedBox(width: 8),
+                      Text('Location: Davao City'),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.payment),
+                      SizedBox(width: 8),
+                      Text('Pay per Hour: Php 200'),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.accessibility),
+                      SizedBox(width: 8),
+                      Text('Gender: Female'),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today),
+                      SizedBox(width: 8),
+                      Text('Age: 28'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Availability and other selections
             Container(
               margin: const EdgeInsetsDirectional.symmetric(horizontal: 10),
               padding: const EdgeInsets.all(16.0),
@@ -164,108 +187,125 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
               ),
               child: Column(
                 children: [
-                  _buildPickerSection(
-                    title: 'Select Date',
-                    value: formattedDate,
-                    icon: Icons.calendar_today,
-                    onTap: _pickDate,
-                  ),
+                  AvailabilitySelector(selectedDays: _selectedDays),
                   const SizedBox(height: 16),
-                  _buildPickerSection(
-                    title: 'Select Time',
-                    value: formattedTime,
-                    icon: Icons.access_time,
-                    onTap: _pickTime,
-                  ),
-                  const SizedBox(height: 16),
-                  // Availability selector
+                  TimeSelector(onTimeSelected: _onTimeSelected),
+                  const SizedBox(height: 24),
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8.0),
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Available Days',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          'Choose Payment Timing',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 10),
-                        ..._selectedDays.keys.map((day) {
-                          // Only display days that are selected
-                          return _selectedDays[day] == true
-                              ? ListTile(
-                                  leading: const Icon(Icons.check,
-                                      color: Colors.green),
-                                  title: Text(day,
-                                      style:
-                                          const TextStyle(color: Colors.black)),
-                                )
-                              : const SizedBox.shrink();
-                        }),
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'Before Service',
+                              groupValue: _paymentTiming,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentTiming = value;
+                                });
+                              },
+                            ),
+                            const Text('Before'),
+                            Radio<String>(
+                              value: 'After Service',
+                              groupValue: _paymentTiming,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentTiming = value;
+                                });
+                              },
+                            ),
+                            const Text('After'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Select Payment Mode',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        Row(
+                          children: [
+                            Radio<String>(
+                              value: 'GCash',
+                              groupValue: _paymentMode,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentMode = value;
+                                });
+                              },
+                            ),
+                            const Text('GCash'),
+                            Radio<String>(
+                              value: 'Card',
+                              groupValue: _paymentMode,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  _paymentMode = value;
+                                });
+                              },
+                            ),
+                            const Text('Card'),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                      hintText: 'Enter any special requirements',
-                      controller: _specialRequirementsController),
-                  // TextField(
-                  //   controller: _specialRequirementsController,
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Special Requirements',
-                  //     hintText: 'Enter any special requirements',
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(8.0),
-                  //     ),
-                  //     filled: true,
-                  //     fillColor: Theme.of(context).cardColor,
-                  //   ),
-                  //   maxLines: 3,
-                  // ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
+                    controller: _specialRequirementsController,
+                    hintText: 'Enter any special requirements',
+                    suffix: null,
+                  ),
+                  const SizedBox(height: 30),
+                  AppButton(
+                    text: 'Submit Request',
                     onPressed: _submitBooking,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                    ),
-                    child: const Text('Submit'),
                   ),
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildPickerSection({
-    required String title,
-    required String value,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(value),
-        trailing: Icon(icon),
-        onTap: onTap,
       ),
     );
   }

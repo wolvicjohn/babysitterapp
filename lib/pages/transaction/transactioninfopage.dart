@@ -1,3 +1,5 @@
+import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/pages/rate/ratepage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../styles/colors.dart';
@@ -85,23 +87,24 @@ class TransactionInfoPage extends StatelessWidget {
 
                     // Centered Close Button
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: primaryFgColor,
-                          backgroundColor: primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                        ),
-                        child: const Text(
-                          'Close',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ),
+                        width: double.infinity,
+                        child: AppButton(
+                          text: "Rate Babysitter",
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const RatePage()),
+                            );
+                          },
+                        )),
+                    SizedBox(
+                        width: double.infinity,
+                        child: AppButton(
+                          text: "Close",
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )),
                   ],
                 ),
               ),

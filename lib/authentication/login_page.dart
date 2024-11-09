@@ -1,4 +1,5 @@
 import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/pages/homepage/home_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/size.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -160,7 +161,11 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             // Implement your sign in logic here
-                            signUserIn();
+                            // signUserIn();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                            );
                           }
                         },
                       )),

@@ -1,4 +1,9 @@
+import 'package:babysitterapp/pages/account/account_page.dart';
 import 'package:babysitterapp/pages/help_and_support/help_and_support_page.dart';
+import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
+import 'package:babysitterapp/pages/location/user_view_location.dart';
+import 'package:babysitterapp/pages/payment/payment_page.dart';
+import 'package:babysitterapp/pages/requirement/requirement_page.dart';
 import 'package:babysitterapp/pages/search_page/search_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
@@ -73,13 +78,13 @@ class SettingsPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 4),
-                      Text(
-                        'New Update',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.orange,
-                        ),
-                      ),
+                      // Text(
+                      //   'New Update',
+                      //   style: TextStyle(
+                      //     fontSize: 14,
+                      //     color: Colors.orange,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],
@@ -89,7 +94,14 @@ class SettingsPage extends StatelessWidget {
               title: 'GENERAL',
               items: [
                 SettingsItem(
-                    icon: Icons.person, label: 'My Profile', onTap: () {}),
+                    icon: Icons.check,
+                    label: 'Get Verified',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const Reqpage()),
+                      );
+                    }),
                 SettingsItem(
                     icon: Icons.notifications,
                     label: 'Notifications',
@@ -99,11 +111,32 @@ class SettingsPage extends StatelessWidget {
                     label: 'Transaction History',
                     onTap: () {}),
                 SettingsItem(
-                    icon: Icons.account_circle, label: 'Account', onTap: () {}),
+                    icon: Icons.account_circle,
+                    label: 'Account',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const AccountPage()),
+                      );
+                    }),
                 SettingsItem(
-                    icon: Icons.payment, label: 'Payment', onTap: () {}),
+                    icon: Icons.payment,
+                    label: 'Payment',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const PaymentPage()),
+                      );
+                    }),
                 SettingsItem(
-                    icon: Icons.location_on, label: 'Location', onTap: () {}),
+                    icon: Icons.location_on,
+                    label: 'Location',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const UserViewLocation()),
+                      );
+                    }),
               ],
             ),
             SettingsSection(
