@@ -1,4 +1,5 @@
 import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 class BabySitterLandingPage extends StatefulWidget {
@@ -12,72 +13,69 @@ class _BabySitterLandingPageState extends State<BabySitterLandingPage> {
   bool isLoginButtonPressed = false;
   bool isRegisterButtonPressed = false;
 
+  void _navigateAndResetButton(String route, VoidCallback resetButton) {
+    Navigator.pushNamed(context, route).then((_) => setState(resetButton));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      backgroundColor: accentColor,
+      body: SizedBox(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFB39DDB), Color(0xFF9575CD)],
-          ),
-        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // logo
-            const CircleAvatar(
-              radius: 80,
-              backgroundImage: AssetImage('assets/images/app-logo.png'),
-              backgroundColor: Colors.transparent,
-            ),
+            _buildLogo(),
             const SizedBox(height: 20),
-            const Text(
-              'Babysitter Booking App',
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-              ),
-            ),
+            _buildAppName(),
             const SizedBox(height: 40),
-            // Login button
-            SizedBox(
-                width: 250,
-                child: AppButton(
-                  text: "Login",
-                  onPressed: () {
-                    setState(() {
-                      isLoginButtonPressed = true;
-                    });
-                    Navigator.pushNamed(context, '/login').then((_) {
-                      setState(() {
-                        isLoginButtonPressed = false;
-                      });
-                    });
-                  },
-                )),
+            _buildActionButton("Login", '/login', () {
+              isLoginButtonPressed = true;
+            }, () {
+              isLoginButtonPressed = false;
+            }),
             const SizedBox(height: 20),
-            // Register button
-            SizedBox(
-                width: 250,
-                child: AppButton(
-                  text: "Register",
-                  onPressed: () {
-                    setState(() {
-                      isRegisterButtonPressed = true;
-                    });
-                    Navigator.pushNamed(context, '/register').then((_) {
-                      setState(() {
-                        isRegisterButtonPressed = false;
-                      });
-                    });
-                  },
-                )),
+            _buildActionButton("Register", '/register', () {
+              isRegisterButtonPressed = true;
+            }, () {
+              isRegisterButtonPressed = false;
+            }),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLogo() {
+    return const CircleAvatar(
+      radius: 80,
+      backgroundImage: AssetImage('assets/images/app-logo.png'),
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _buildAppName() {
+    return const Text(
+      'Babysitter Booking App',
+      style: TextStyle(
+        fontSize: 24,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String text, String route,
+      VoidCallback onPressedStart, VoidCallback onPressedEnd) {
+    return SizedBox(
+      width: 250,
+      child: AppButton(
+        text: text,
+        onPressed: () {
+          setState(onPressedStart);
+          _navigateAndResetButton(route, onPressedEnd);
+        },
       ),
     );
   }

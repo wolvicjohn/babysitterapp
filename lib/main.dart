@@ -2,9 +2,12 @@ import 'package:babysitterapp/authentication/landing_page.dart';
 import 'package:babysitterapp/authentication/login_page.dart';
 import 'package:babysitterapp/authentication/register_page.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
