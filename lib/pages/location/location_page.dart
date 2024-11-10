@@ -1,4 +1,4 @@
-import 'package:babysitterapp/pages/location/location_widget.dart';
+import 'package:babysitterapp/pages/location/set_location.dart';
 import 'package:flutter/material.dart';
 
 class Location extends StatelessWidget {
@@ -6,6 +6,6 @@ class Location extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const LocationPage();
+    return const SetLocation();
   }
 }
