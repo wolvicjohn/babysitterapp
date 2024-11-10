@@ -16,70 +16,377 @@ class BabySitterRegisterPage extends StatefulWidget {
 
 class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   final _formKey = GlobalKey<FormState>();
+
+  // Form fields
   String? _email;
   String? _password;
   String? _confirmPassword;
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
   String? _phoneNumber;
+  String? _selectedRole;
   bool _isAgreed = false;
 
-  void signUserUp() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
-    try {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: _email!, password: _password!);
-      Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/welcome');
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      print(e.code);
-      if (e.code == 'invalid-email') {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          backgroundColor: Colors.black,
-          content: Text(
-            "Invalid Email",
-            style: TextStyle(color: Colors.white, letterSpacing: 0.5),
-          ),
-        ));
-      }
+  // UI state
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          backgroundColor: Colors.black,
-          content: Text(
-            "The password provided is too weak.",
-            style: TextStyle(color: Colors.white, letterSpacing: 0.5),
-          ),
-        ));
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          backgroundColor: Colors.black,
-          content: Text(
-            "The account already exists for that email.",
-            style: TextStyle(color: Colors.white, letterSpacing: 0.5),
-          ),
-        ));
-      }
+  // Constants
+  static const double _spacing = 20.0;
+  static const double _largeSpacing = 30.0;
+  static const double _welcomeTextSize = 24.0;
+
+  // Input styling
+  InputDecoration get _defaultInputDecoration => InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.8),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+      );
+
+  // Registration methods
+  Future<void> signUserUp() async {
+    if (!_formKey.currentState!.validate() || !_isAgreed) {
+      _showErrorMessage('Please agree to the terms and conditions');
+      return;
     }
+
+    _formKey.currentState!.save();
+    await _createFirebaseUser();
+  }
+
+  Future<void> _createFirebaseUser() async {
+    _showLoadingDialog();
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email!,
+        password: _password!,
+      );
+      _onRegistrationSuccess();
+    } on FirebaseAuthException catch (e) {
+      _handleAuthError(e);
+    }
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  void _onRegistrationSuccess() {
+    Navigator.pop(context); // Dismiss loading dialog
+    Navigator.pushReplacementNamed(context, '/welcome');
+  }
+
+  void _handleAuthError(FirebaseAuthException e) {
+    Navigator.pop(context); // Dismiss loading dialog
+
+    switch (e.code) {
+      case 'invalid-email':
+        _showErrorMessage('Invalid Email');
+        break;
+      case 'weak-password':
+        _showErrorMessage('The password provided is too weak.');
+        break;
+      case 'email-already-in-use':
+        _showErrorMessage('The account already exists for that email.');
+        break;
+      default:
+        _showErrorMessage('Registration failed. Please try again.');
+    }
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.black,
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white, letterSpacing: 0.5),
+      ),
+    ));
+  }
+
+  // Form validation
+  String? _validatePassword(String? value) {
+    if (value?.isEmpty == true) {
+      return 'Please enter your password';
+    }
+    _password = value;
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value?.isEmpty == true) {
+      return 'Please confirm your password';
+    }
+    if (value != _password) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
+  String? _validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    if (!RegExp(r'^[0-9]{11}$').hasMatch(value)) {
+      return 'Phone number must be 11 digits';
+    }
+    return null;
+  }
+
+  // UI Components
+  Widget _buildWelcomeText() {
+    return const Text.rich(
+      TextSpan(
+        text: 'Create an Account,\n',
+        style: TextStyle(
+          fontSize: _welcomeTextSize,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+        children: <TextSpan>[
+          TextSpan(
+            text: 'to get started now!',
+            style: TextStyle(
+              fontSize: _welcomeTextSize,
+              color: Colors.white,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildNameField() {
+    return TextField(
+      decoration: _defaultInputDecoration.copyWith(
+        hintText: "Full Name",
+      ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      validator: (value) =>
+          value?.isEmpty == true ? 'Please enter your email' : null,
+      onSaved: (value) => _email = value,
+      decoration: _defaultInputDecoration.copyWith(
+        hintText: "Email",
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      obscureText: !_isPasswordVisible,
+      validator: _validatePassword,
+      onSaved: (value) => _password = value,
+      decoration: _defaultInputDecoration.copyWith(
+        hintText: "Password",
+        suffixIcon: _buildPasswordVisibilityToggle(
+          isVisible: _isPasswordVisible,
+          onToggle: () =>
+              setState(() => _isPasswordVisible = !_isPasswordVisible),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return TextFormField(
+      obscureText: !_isConfirmPasswordVisible,
+      validator: _validateConfirmPassword,
+      onSaved: (value) => _confirmPassword = value,
+      decoration: _defaultInputDecoration.copyWith(
+        hintText: "Confirm Password",
+        suffixIcon: _buildPasswordVisibilityToggle(
+          isVisible: _isConfirmPasswordVisible,
+          onToggle: () => setState(
+              () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordVisibilityToggle({
+    required bool isVisible,
+    required VoidCallback onToggle,
+  }) {
+    return IconButton(
+      icon: Icon(
+        isVisible ? Icons.visibility : Icons.visibility_off,
+        color: Colors.grey,
+      ),
+      onPressed: onToggle,
+    );
+  }
+
+  Widget _buildRoleDropdown() {
+    return DropdownButtonFormField<String>(
+      decoration: _defaultInputDecoration.copyWith(
+        labelText: 'Select Role',
+      ),
+      value: _selectedRole,
+      items: const [
+        DropdownMenuItem(value: 'employer', child: Text('Employer')),
+        DropdownMenuItem(value: 'babysitter', child: Text('Babysitter')),
+      ],
+      onChanged: (value) => setState(() => _selectedRole = value),
+    );
+  }
+
+  Widget _buildPhoneNumberField() {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      maxLength: 11,
+      validator: _validatePhoneNumber,
+      onSaved: (value) => _phoneNumber = value,
+      decoration: _defaultInputDecoration.copyWith(
+        hintText: "Phone Number",
+      ),
+    );
+  }
+
+  Widget _buildTermsCheckbox() {
+    return CheckboxListTile(
+      title: Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(
+              text: 'I understand and agree with the ',
+              style: TextStyle(color: Colors.white),
+            ),
+            TextSpan(
+              text: 'Terms and Conditions',
+              style: const TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.white,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  await showDialog(
+                    context: context,
+                    builder: (context) => const TermsConditionsDialog(),
+                  );
+                },
+            ),
+          ],
+        ),
+      ),
+      value: _isAgreed,
+      onChanged: (value) => setState(() => _isAgreed = value ?? false),
+      controlAffinity: ListTileControlAffinity.leading,
+      activeColor: Colors.white,
+      checkColor: Colors.black,
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: AppButton(
+        text: "Register",
+        onPressed: signUserUp,
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Row(
+      children: <Widget>[
+        Expanded(
+          child: Divider(
+            color: Colors.white,
+            thickness: 1,
+            endIndent: 10,
+          ),
+        ),
+        Text(
+          'Or Register with',
+          style: TextStyle(color: Colors.white),
+        ),
+        Expanded(
+          child: Divider(
+            color: Colors.white,
+            thickness: 1,
+            indent: 10,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialLoginButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildSocialButton(
+          'https://developers.google.com/identity/images/g-logo.png',
+          () async {
+            await Authentication.signInWithGoogle(context: context);
+            Navigator.pushReplacementNamed(context, '/welcome');
+          },
+        ),
+        const SizedBox(width: _spacing),
+        _buildSocialButton(
+          'https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png',
+          () {
+            // Facebook login logic
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSocialButton(String imageUrl, VoidCallback onPressed) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: IconButton(
+        icon: Image.network(imageUrl, height: 24),
+        iconSize: 50,
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  Widget _buildLoginPrompt() {
+    return TextButton(
+      onPressed: () => Navigator.pushNamed(context, '/login'),
+      child: const Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: "Already have an account? ",
+              style: TextStyle(color: Colors.white),
+            ),
+            TextSpan(
+              text: "Login now",
+              style: TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // styles
-    var outlineBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(100),
-    );
-    //
-    //
     return Scaffold(
       backgroundColor: secondaryColor,
       body: SingleChildScrollView(
@@ -91,307 +398,29 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 100),
-                const Text.rich(
-                  TextSpan(
-                    text: 'Create an Account,\n',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'to get started now!',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 30),
-                // name
-                TextField(
-                  decoration: InputDecoration(
-                      hintText: "Full Name",
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      border: outlineBorder),
-                ),
-                const SizedBox(height: 20),
-                // email
-                TextFormField(
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _email = value;
-                  },
-                  decoration: InputDecoration(
-                      hintText: "Email",
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      border: outlineBorder),
-                ),
-                const SizedBox(height: 20),
-                // password
-                TextFormField(
-                  obscureText: !_isPasswordVisible,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    _password = value;
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _password = value;
-                  },
-                  decoration: InputDecoration(
-                      hintText: "Password",
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                      ),
-                      border: outlineBorder),
-                ),
-                const SizedBox(height: 20),
-                // confirm password
-                TextFormField(
-                  obscureText: !_isConfirmPasswordVisible,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _password) {
-                      return 'Passwords do not match';
-                    }
-                    _confirmPassword = value;
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _confirmPassword = value;
-                  },
-                  decoration: InputDecoration(
-                      hintText: "Confirm Password",
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isConfirmPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isConfirmPasswordVisible =
-                                !_isConfirmPasswordVisible;
-                          });
-                        },
-                      ),
-                      border: outlineBorder),
-                ),
-                const SizedBox(height: 20),
-                // dropdown : select role whether employer or babysitter
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                      labelText: 'Select Role',
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      border: outlineBorder),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'employer', child: Text('Employer')),
-                    DropdownMenuItem(
-                        value: 'babysitter', child: Text('Babysitter')),
-                  ],
-                  onChanged: (value) {
-                    // Handle role selection
-                  },
-                ),
-                const SizedBox(height: 20),
-                // phone number for otp
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  maxLength: 11,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
-                    } else if (!RegExp(r'^[0-9]{11}$').hasMatch(value)) {
-                      return 'Phone number must be 11 digits';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _phoneNumber = value;
-                  },
-                  decoration: InputDecoration(
-                      hintText: "Phone Number",
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                      border: outlineBorder),
-                ),
-                const SizedBox(height: 20),
-                // checkbox for terms and conditions
-                CheckboxListTile(
-                  title: Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: 'I understand and agree with the ',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextSpan(
-                          text: 'Terms and Conditions',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () async {
-                              await showDialog(
-                                context: context,
-                                builder: (context) =>
-                                    const TermsConditionsDialog(),
-                              );
-                              // Navigator.pushNamed(context, '/terms');
-                            },
-                        ),
-                      ],
-                    ),
-                  ),
-                  value: _isAgreed,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isAgreed = value ?? false;
-                    });
-                  },
-                  controlAffinity: ListTileControlAffinity.leading,
-                  activeColor: Colors.white,
-                  checkColor: Colors.black,
-                ),
-                const SizedBox(height: 30),
-                // register button
-                SizedBox(
-                    width: double.infinity,
-                    child: AppButton(
-                      text: "Register",
-                      onPressed: () {
-                        // Add register logic
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          // Implement your sign-up logic here
-                          signUserUp();
-                        }
-                      },
-                    )),
-                const SizedBox(height: 30),
-                const Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Divider(
-                        color: Colors.white,
-                        thickness: 1,
-                        endIndent: 10,
-                      ),
-                    ),
-                    Text(
-                      'Or Register with',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.white,
-                        thickness: 1,
-                        indent: 10,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                // register with google and facebook
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: Image.network(
-                            'https://developers.google.com/identity/images/g-logo.png',
-                            height: 24),
-                        iconSize: 50,
-                        onPressed: () async {
-                          await Authentication.signInWithGoogle(
-                              context: context);
-                          Navigator.pushReplacementNamed(context, '/welcome');
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: Image.network(
-                            'https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png',
-                            height: 24),
-                        iconSize: 50,
-                        onPressed: () {
-                          // Facebook login logic
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: const Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Already have an account? ",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextSpan(
-                          text: "Login now",
-                          style: TextStyle(
-                              color: Colors.white,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildWelcomeText(),
+                const SizedBox(height: _largeSpacing),
+                _buildNameField(),
+                const SizedBox(height: _spacing),
+                _buildEmailField(),
+                const SizedBox(height: _spacing),
+                _buildPasswordField(),
+                const SizedBox(height: _spacing),
+                _buildConfirmPasswordField(),
+                const SizedBox(height: _spacing),
+                _buildRoleDropdown(),
+                const SizedBox(height: _spacing),
+                _buildPhoneNumberField(),
+                const SizedBox(height: _spacing),
+                _buildTermsCheckbox(),
+                const SizedBox(height: _largeSpacing),
+                _buildRegisterButton(),
+                const SizedBox(height: _largeSpacing),
+                _buildDivider(),
+                const SizedBox(height: _largeSpacing),
+                _buildSocialLoginButtons(),
+                const SizedBox(height: _largeSpacing),
+                _buildLoginPrompt(),
               ],
             ),
           ),

@@ -14,31 +14,43 @@ class UserData {
 
   List<Babysitter> babysitterList = [
     Babysitter(
+      id: 'sample',
       email: 'emmagill@gmail.com',
       name: 'Emma Gill',
-      id: 'sample',
       img: 'assets/images/female1.jpg',
+      address: 'Panabo City',
+      phone: '+639123456789',
+      age: 21,
       rating: 0,
     ),
     Babysitter(
+      id: 'helloworld',
       email: 'anthonyparr@gmail.com',
       name: 'Anthony Parr',
-      id: 'helloworld',
       img: 'assets/images/male2.jpg',
+      address: 'Davao City',
+      phone: '+639123456789',
+      age: 22,
       rating: 0,
     ),
     Babysitter(
+      id: 'hiearth',
       email: 'carlgibson@gmail.com',
       name: 'Carl Gibson',
-      id: 'hiearth',
       img: 'assets/images/male3.jpg',
+      address: 'Tagum City',
+      phone: '+639123456789',
+      age: 23,
       rating: 0,
     ),
     Babysitter(
+      id: 'heymars',
       email: 'samanthabond.com',
       name: 'Samantha	Bond',
-      id: 'heymars',
       img: 'assets/images/female2.jpg',
+      address: 'Manila City',
+      phone: '+639123456789',
+      age: 24,
       rating: 0,
     ),
   ];
@@ -84,5 +96,11 @@ class UserData {
       rating: 2,
       review: 'Will not choose her again',
     ),
+  ];
+
+  List<String> offerList = [
+    '100',
+    '200',
+    '300',
   ];
 }

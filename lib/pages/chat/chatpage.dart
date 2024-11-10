@@ -155,7 +155,7 @@ class _ChatPageState extends State<ChatPage> {
               title: const Text('Messages'),
               leading: IconButton(
                 onPressed: () {
-                  // Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_back),
               ),
