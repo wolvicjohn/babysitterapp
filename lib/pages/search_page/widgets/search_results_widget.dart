@@ -8,12 +8,14 @@ class SearchResultsWidget extends StatelessWidget {
   final List<SearchResult> searchResults;
   final Function(SearchResult) onLabelClick;
   final bool noResultsFound;
+  final String type;
 
   const SearchResultsWidget({
     super.key,
     required this.searchResults,
     required this.onLabelClick,
     required this.noResultsFound,
+    required this.type,
   });
 
   @override
@@ -52,7 +54,7 @@ class SearchResultsWidget extends StatelessWidget {
                           color: textColor)
                       ),
                       subtitle: Text(result.bio),
-                      trailing: Text("${result.rating} ★ (${result.reviewsCount} reviews)"),
+                      trailing: Text('${result.rating} ★ (${result.reviewsCount} reviews)'),
                       onTap: () {
                         Navigator.push(
                           context,

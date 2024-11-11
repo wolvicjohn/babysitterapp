@@ -23,7 +23,7 @@ class AutocompleteWidget extends StatelessWidget {
         children: searchResults.map((result) {
           return InputChip(
             label: Text(
-              result.name,
+              result.location,
               style: TextStyle(
                 color: textColor,
                 fontSize: Responsive.getTextFontSize(context),
