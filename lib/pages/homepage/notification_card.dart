@@ -4,7 +4,7 @@ class NotificationCard extends StatelessWidget {
   final String name;
   final String time;
   final int reviews;
-  final String paymentStatus; // Payment status (e.g., "Paid", "Pending")
+  final String paymentStatus;
 
   const NotificationCard({
     super.key,
@@ -27,9 +27,9 @@ class NotificationCard extends StatelessWidget {
             Text(name, style: Theme.of(context).textTheme.bodyLarge),
             Text(time, style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 8),
-            Row(
+            const Row(
               children: [
-                const Spacer(),
+                Spacer(),
               ],
             ),
             const SizedBox(height: 8),
