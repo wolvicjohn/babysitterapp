@@ -3,6 +3,7 @@ import 'package:babysitterapp/pages/homepage/babysitter_card.dart';
 import 'package:babysitterapp/pages/homepage/notification_page.dart';
 import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
 import 'package:babysitterapp/pages/profile/profilepage.dart';
+import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/responsive.dart';
 import 'package:babysitterapp/styles/size.dart';
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
       'rating': 4.3,
       'reviews': 90,
       'profileImage': 'assets/images/female1.jpg',
+      'liked': false,
     },
     {
       'name': 'Ken Takakura',
@@ -38,6 +40,7 @@ class _HomePageState extends State<HomePage> {
       'rating': 4.7,
       'reviews': 140,
       'profileImage': 'assets/images/male3.jpg',
+      'liked': false,
     },
     {
       'name': 'Granny',
@@ -45,8 +48,15 @@ class _HomePageState extends State<HomePage> {
       'rating': 4.9,
       'reviews': 404,
       'profileImage': 'assets/images/female2.jpg',
+      'liked': false,
     },
   ];
+
+  void _toggleLike(int index) {
+    setState(() {
+      babysitters[index]['liked'] = !babysitters[index]['liked'];
+    });
+  }
 
   List<Map<String, dynamic>> transactions = [
     {
@@ -154,7 +164,9 @@ class _HomePageState extends State<HomePage> {
           ListView(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            children: babysitters.map((babysitter) {
+            children: babysitters.asMap().entries.map((entry) {
+              int index = entry.key;
+              var babysitter = entry.value;
               return InkWell(
                 onTap: () {
                   Navigator.of(context).push(
@@ -171,6 +183,13 @@ class _HomePageState extends State<HomePage> {
                   rating: babysitter['rating'],
                   reviews: babysitter['reviews'],
                   profileImage: babysitter['profileImage'],
+                  heartIcon: IconButton(
+                    icon: Icon(
+                      Icons.favorite,
+                      color: babysitter['liked'] ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () => _toggleLike(index),
+                  ),
                 ),
               );
             }).toList(),
@@ -237,13 +256,10 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: screenHeight * 0.01),
-            // Section 1: Top Rated Babysitters
             _buildBabysitterSection(
                 context, 'Top Rated Babysitters', filteredBabysitters),
-            // Section 2: Total Transaction
             _buildTransactionSection(
                 context, 'Total Transaction', transactions),
-            // Section 3: Analytics (Modified)
             _buildAnalyticsSection(context),
           ],
         ),
@@ -274,11 +290,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Modified to show simple analytics content
   Widget _buildAnalyticsSection(BuildContext context) {
     final double screenHeight = sizeConfig.heightSize(context);
 
-    // Calculate analytics data
     double averageRating = 0.0;
     double averageRate = 0.0;
 
@@ -314,15 +328,14 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
-              // Add the babysitter logo to the right
-              Image.asset(
-                'assets/images/app-logo.png', // Update with the actual path to the logo image
-                height: 40.0, // You can adjust the size as needed
+              Icon(
+                Icons.analytics,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 40.0,
               ),
             ],
           ),
           SizedBox(height: screenHeight * 0.01),
-          // Display average rating and average rate
           Text(
             'Average Rating: ${averageRating.toStringAsFixed(1)} / 5.0',
             style: TextStyle(
@@ -351,10 +364,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Modified to show transaction details instead of babysitter cards
   Widget _buildTransactionSection(BuildContext context, String title,
       List<Map<String, dynamic>> transactions) {
     final double screenHeight = sizeConfig.heightSize(context);
+
+    // Group transactions by babysitter
+    Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
+    for (var transaction in transactions) {
+      final babysitterName = transaction['babysitterName'];
+      if (!groupedTransactions.containsKey(babysitterName)) {
+        groupedTransactions[babysitterName] = [];
+      }
+      groupedTransactions[babysitterName]!.add(transaction);
+    }
 
     return Container(
       padding: Responsive.getResponsivePadding(context),
@@ -375,16 +397,73 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(height: screenHeight * 0.01),
-          ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: transactions.map((transaction) {
-              return ListTile(
-                title: Text('${transaction['babysitterName']}'),
-                subtitle: Text('Date: ${transaction['date']}'),
-                trailing: Text('Php ${transaction['amount']}'),
+          // Display grouped transactions
+          Column(
+            children: groupedTransactions.entries.map((entry) {
+              final babysitterName = entry.key;
+              final babysitterTransactions = entry.value;
+
+              return Container(
+                margin: EdgeInsets.only(top: screenHeight * 0.01),
+                padding: Responsive.getResponsivePadding(context),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      babysitterName,
+                      style: TextStyle(
+                        fontSize: Responsive.getTextFontSize(context) * 1.2,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: babysitterTransactions.map((transaction) {
+                        return ListTile(
+                          title: Text(
+                            'Date: ${transaction['date']}',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                          trailing: Text(
+                            'Php ${transaction['amount']}',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               );
             }).toList(),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionHistoryPage(),
+                  ),
+                );
+              },
+              child: Text(
+                'See All',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: Responsive.getTextFontSize(context),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -396,11 +475,11 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Filter Babysitters'),
+          title: const Text('Filter Babysitters'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Minimum Rating:'),
+              const Text('Minimum Rating:'),
               Slider(
                 value: _minRating,
                 min: 0.0,
@@ -412,7 +491,7 @@ class _HomePageState extends State<HomePage> {
                   });
                 },
               ),
-              Text('Minimum Rate:'),
+              const Text('Minimum Rate:'),
               Slider(
                 value: _minRate,
                 min: 0.0,
@@ -431,14 +510,14 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 setState(() {});
                 Navigator.of(context).pop();
               },
-              child: Text('Apply'),
+              child: const Text('Apply'),
             ),
           ],
         );
