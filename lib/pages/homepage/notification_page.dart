@@ -1,4 +1,4 @@
-import 'package:babysitterapp/pages/chat/chatpage.dart'; // Import chatpage
+import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/notification_card.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,6 @@ class NotificationPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          // Existing notifications (rated babysitter + payment status)
           const NotificationCard(
             name: 'Emma Gill',
             time: '8 hours',
@@ -40,8 +39,6 @@ class NotificationPage extends StatelessWidget {
             reviews: 0,
             paymentStatus: 'Pending',
           ),
-
-          // New "wants to connect" notification
           Card(
             margin: const EdgeInsets.all(10),
             elevation: 5,
@@ -98,11 +95,8 @@ class NotificationPage extends StatelessWidget {
               ),
             ),
           ),
-
-          // New "Message from Babysitter" notification
           GestureDetector(
             onTap: () {
-              // Navigate to ChatPage on tap
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const ChatPage(),
