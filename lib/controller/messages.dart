@@ -3,13 +3,13 @@
 class Messages {
   final String id;
   final dynamic msg;
-  final String time;
+  final DateTime timestamp;
   bool isClicked;
 
   Messages({
     required this.id,
     required this.msg,
-    required this.time,
+    required this.timestamp,
     required this.isClicked,
   });
 }

@@ -2,7 +2,6 @@ import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '/controller/babysitter.dart';
-import '/controller/messagedata.dart';
 import '/controller/userdata.dart';
 import 'chatboxpage.dart';
 
@@ -15,15 +14,14 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   UserData userData = UserData();
-  MessageData messageData = MessageData();
   String babysitterId = '';
   late bool isLongPressed;
   List<String> selectedBabysitterId = [];
 
   @override
   void initState() {
-    isLongPressed = false;
     super.initState();
+    isLongPressed = false;
   }
 
   @override
@@ -32,10 +30,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   //check if the current user has previous conversation of the babysitter
-  bool userHasMessages(String userID) {
-    return messageData.sample.any((message) => message.id == userID) ||
-        messageData.helloworld.any((message) => message.id == userID) ||
-        messageData.hiearth.any((message) => message.id == userID);
+  bool userHasMessages(String babysitterID) {
+    return userData.currentUser.messages
+        .any((listWithID) => listWithID.id == babysitterID);
   }
 
   //list of babysitter in the chat page
@@ -44,10 +41,10 @@ class _ChatPageState extends State<ChatPage> {
           if (isLongPressed) {
             setState(() {
               //Add or remove babysitter id to the selected list
-              if (selectedBabysitterId.contains(babysitter.id)) {
-                selectedBabysitterId.remove(babysitter.id);
+              if (selectedBabysitterId.contains(babysitter.babysitterID)) {
+                selectedBabysitterId.remove(babysitter.babysitterID);
               } else {
-                selectedBabysitterId.add(babysitter.id);
+                selectedBabysitterId.add(babysitter.babysitterID);
               }
             });
           } else {
@@ -56,7 +53,7 @@ class _ChatPageState extends State<ChatPage> {
               babysitter.isClicked = true;
 
               if (babysitter.isClicked!) {
-                babysitterId = babysitter.id;
+                babysitterId = babysitter.babysitterID;
               }
             });
 
@@ -69,7 +66,7 @@ class _ChatPageState extends State<ChatPage> {
         onLongPress: () {
           setState(() {
             //Add babysitter id to the selected list
-            selectedBabysitterId.add(babysitter.id);
+            selectedBabysitterId.add(babysitter.babysitterID);
             isLongPressed = true;
           });
         },
@@ -81,15 +78,15 @@ class _ChatPageState extends State<ChatPage> {
               //if longpressed is true diplay the checkbox
               if (isLongPressed)
                 Checkbox(
-                  value: selectedBabysitterId.contains(babysitter.id),
+                  value: selectedBabysitterId.contains(babysitter.babysitterID),
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
                         //Add babysitter id to the selected list
-                        selectedBabysitterId.add(babysitter.id);
+                        selectedBabysitterId.add(babysitter.babysitterID);
                       } else {
                         //Remove babysitter id to the selected list
-                        selectedBabysitterId.remove(babysitter.id);
+                        selectedBabysitterId.remove(babysitter.babysitterID);
                       }
                     });
                   },
@@ -175,7 +172,7 @@ class _ChatPageState extends State<ChatPage> {
             ),
       body: ListView(
         children: userData.babysitterList
-            .where((babysitter) => userHasMessages(babysitter.id))
+            .where((babysitter) => userHasMessages(babysitter.babysitterID))
             .map((babysitter) {
           return babysitterList(babysitter);
         }).toList(),

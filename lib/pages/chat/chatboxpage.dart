@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../../controller/babysitter.dart';
 import '../../controller/currentuser.dart';
-import '../../controller/messagedata.dart';
 import '../../controller/userdata.dart';
 import '../../views/customwidget.dart';
 
@@ -20,14 +19,14 @@ class ChatBoxPage extends StatefulWidget {
 
 class _ChatBoxPageState extends State<ChatBoxPage> {
   final UserData userData = UserData();
-  final MessageData messageData = MessageData();
   final CustomWidget customWidget = CustomWidget();
   //fetch babysitter data based on babysitterId_
   late Babysitter babysitter = userData.babysitterList.firstWhere(
-    (babysitter) => babysitter.id == widget.babysitterId_,
+    (babysitter) => babysitter.babysitterID == widget.babysitterId_,
   );
   //fetch current user data
   late CurrentUser currentUser = userData.currentUser;
+  late List<Messages> messageList;
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
   late String selectedOffer;
@@ -37,15 +36,21 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
     selectedOffer = userData.offerList.first;
+    messageList = userData.currentUser.messages
+        .firstWhere(
+          (listWithID) => listWithID.id == widget.babysitterId_,
+          orElse: () =>
+              const ListWithID(id: '', data: []), // Fallback if not found
+        )
+        .data;
   }
 
   //fetch messages
   Widget fetchMessage() {
+    messageList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
     return ListView(
       controller: scrollController,
-      children: customWidget
-          .messageList(widget.babysitterId_, messageData)
-          .map((messages) {
+      children: messageList.map((messages) {
         bool isUser = currentUser.id == messages.id;
 
         onTap() {
@@ -70,13 +75,11 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
     Messages newMessage = Messages(
       id: currentUser.id,
       msg: message,
-      time: '10:59 pm',
+      timestamp: DateTime.now(),
       isClicked: false,
     );
     setState(() {
-      customWidget
-          .messageList(widget.babysitterId_, messageData)
-          .add(newMessage);
+      messageList.add(newMessage);
     });
     SchedulerBinding.instance.addPostFrameCallback((_) {
       scrollToBottom();

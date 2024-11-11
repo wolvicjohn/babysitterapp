@@ -1,21 +1,13 @@
 import 'package:babysitterapp/components/button.dart';
 import 'package:babysitterapp/controller/babysitter.dart';
 import 'package:babysitterapp/controller/currentuser.dart';
-import 'package:babysitterapp/controller/messagedata.dart';
+import 'package:babysitterapp/controller/rating.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../controller/messages.dart';
 import '../styles/colors.dart';
-
-//temporary experience list
-final List userExperience = [
-  'Experience 1',
-  'Experience 2',
-  'Experience 3',
-  'Experience 4',
-  'Experience 5',
-];
 
 //floating button for profile page
 class CustomWidget {
@@ -47,29 +39,46 @@ class CustomWidget {
       );
 
 //carousel item for feedback header
-  carouselItem(String img, String name, int rating, String feedback) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(img),
-            radius: 40,
+  Widget carouselItem(
+      String img, String name, int rating, String feedback, List? images) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircleAvatar(
+          backgroundImage: AssetImage(img),
+          radius: 40,
+        ),
+        Text(
+          name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          Text(
-            name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 15),
-          ratingStar(rating, 30),
-          const SizedBox(height: 15),
-          SelectableText(
-            feedback,
-            textAlign: TextAlign.center,
-          )
-        ],
-      );
+        ),
+        ratingStar(rating, 30, primaryColor),
+        Text(
+          feedback,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Wrap(
+            children: (images != null)
+                ? images.map((image) {
+                    return Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: Image.asset(
+                        image,
+                        height: (images.length == 1) ? 250 : 150,
+                        width: (images.length == 1) ? 250 : 150,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  }).toList()
+                : []),
+      ],
+    );
+  }
 
   //divider for profile page
   Widget myDivider() => const Divider(
@@ -78,96 +87,138 @@ class CustomWidget {
 
   //main header for profile page
   Widget mainHeader(
-    String img,
     String name,
     String email,
+    String img,
     String address,
-    int age,
-    double rating,
+    DateTime birtdate,
+    String gender,
     int rate,
+    double rating,
     int reviewsNo,
-  ) =>
-      Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: tertiaryColor,
-          boxShadow: [
-            BoxShadow(
-              offset: const Offset(0, 5),
-              color: textColor.withOpacity(.1),
-              blurRadius: 12,
-            ),
-          ],
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(img),
-                  backgroundColor: primaryColor,
-                  radius: 80,
+    int familyservedNo,
+  ) {
+    DateTime currentDate = DateTime.now();
+    TextStyle whiteTextColor() => const TextStyle(color: backgroundColor);
+    int age = currentDate.year - birtdate.year;
+
+    if (birtdate.month > currentDate.month ||
+        (birtdate.month == currentDate.month &&
+            birtdate.day > currentDate.day)) {
+      age--;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: primaryColor,
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, 5),
+            color: textColor.withOpacity(.5),
+            blurRadius: 12,
+          ),
+        ],
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundImage: AssetImage(img),
+                radius: 80,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '$name, $age',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: backgroundColor,
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  '$name, $age',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+              ),
+              Text(
+                gender,
+                style: whiteTextColor(),
+              ),
+              Text(
+                address,
+                style: whiteTextColor(),
+              ),
+              Text(
+                '$familyservedNo Families Served',
+                style: whiteTextColor(),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ratingStar(rating.toInt(), 30, Colors.amber),
+                  Text(
+                    rating.toString(),
+                    style: whiteTextColor(),
                   ),
-                ),
-                Text(address),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ratingStar(rating.toInt(), 30),
-                    Text(rating.toString()),
-                  ],
-                ),
-                Text(
+                ],
+              ),
+              TextButton(
+                onPressed: () {
+                  //go to reviews list
+                },
+                child: Text(
                   '$reviewsNo reviews',
                   style: const TextStyle(
-                    color: primaryColor,
+                    color: backgroundColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text('26 Families Served'),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const Column(
-                      children: [
-                        Text('Availabilty'),
-                        Text(
-                          'MWF',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, letterSpacing: 4),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        'Availabilty',
+                        style: whiteTextColor(),
+                      ),
+                      const Text(
+                        'MWF',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 4,
+                          color: backgroundColor,
                         ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const Text('Hourly rate'),
-                        Text(
-                          'PHP $rate/hr',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Hourly rate',
+                        style: whiteTextColor(),
+                      ),
+                      Text(
+                        'PHP $rate/hr',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: backgroundColor,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   //about header for profile page
   Widget aboutHeader(
@@ -214,7 +265,7 @@ class CustomWidget {
       );
 
   //experience header for profile page
-  Widget experienceHeader() => Container(
+  Widget experienceHeader(List experience) => Container(
         margin: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -227,7 +278,7 @@ class CustomWidget {
             ),
             const SizedBox(height: 5),
             Column(
-              children: userExperience.map((experience) {
+              children: experience.map((experience) {
                 return Row(
                   children: [
                     const Icon(CupertinoIcons.checkmark_alt),
@@ -241,7 +292,8 @@ class CustomWidget {
         ),
       );
   //feedback header for profile page
-  Widget feedbackHeader(String babysitterId_) => Container(
+  Widget feedbackHeader(String babysitterId_, List<Rating> reviewList) =>
+      Container(
         margin: const EdgeInsets.fromLTRB(20, 20, 20, 60),
         child: Column(
           children: [
@@ -252,61 +304,76 @@ class CustomWidget {
                 fontSize: 16,
               ),
             ),
-            CarouselSlider(
-              items: [
-                carouselItem(
-                  'assets/images/male4.jpg',
-                  'William Smith',
-                  5,
-                  r'"I can tell how hard you’ve worked to be more collaborative during meetings. Yesterday, although you disagreed with David’s idea, you asked some good questions first. Your critiques are more powerful than they used to be. You’ve come a long way, and the team is better for it."',
-                ),
-                carouselItem(
-                  'assets/images/female2.jpg',
-                  'Victoria	Bell',
-                  4,
-                  r'"Your ability to work across teams and departments is a strength not everyone has. I’m impressed with the way you’re working to dismantle silos. For example, when you drew the marketing team into our conversations, it sharpened our ideas and helped us meet goals faster. Keep up the good work."',
-                ),
-                carouselItem(
-                  'assets/images/male5.jpg',
-                  'Michael Ince',
-                  5,
-                  r'"You put so much hard work into getting this client, and it really paid off. Thanks to your focus and determination in going the extra mile and managing all of the complexities of this project, we met our goals."',
-                ),
-                carouselItem(
-                  'assets/images/female5.jpg',
-                  'Donna Martin',
-                  5,
-                  r'"Even though the outcome wasn’t what we wanted, I want to congratulate you on all of the hard work you put in over the past few weeks. If we apply that same effort to our next project, I believe we can win."',
-                ),
-                carouselItem(
-                  'assets/images/male3.jpg',
-                  'Stephen Harris',
-                  4,
-                  r'"I really appreciated how you used check-ins to keep me up to date on your project this week. It helped me coordinate with our stakeholders, and I’m excited to share that we’re on track to launch. It’s also great to see your process. I’m impressed with the efficiencies you’re learning."',
-                ),
-              ],
-              options: CarouselOptions(
-                viewportFraction: .9,
-                height: 400,
-                autoPlay: true,
-                enlargeCenterPage: true,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('See all reviews'),
-            )
+            (reviewList.isNotEmpty)
+                ? CarouselSlider(
+                    items: reviewList.map((rating) {
+                      return carouselItem(
+                          'assets/images/female1.jpg',
+                          'Sample User',
+                          rating.rating,
+                          rating.review,
+                          rating.images);
+                    }).toList(),
+                    // [
+                    //   carouselItem(
+                    //     'assets/images/male4.jpg',
+                    //     'William Smith',
+                    //     5,
+                    //     r'"I can tell how hard you’ve worked to be more collaborative during meetings. Yesterday, although you disagreed with David’s idea, you asked some good questions first. Your critiques are more powerful than they used to be. You’ve come a long way, and the team is better for it."',
+                    //   ),
+                    //   carouselItem(
+                    //     'assets/images/female2.jpg',
+                    //     'Victoria	Bell',
+                    //     4,
+                    //     r'"Your ability to work across teams and departments is a strength not everyone has. I’m impressed with the way you’re working to dismantle silos. For example, when you drew the marketing team into our conversations, it sharpened our ideas and helped us meet goals faster. Keep up the good work."',
+                    //   ),
+                    //   carouselItem(
+                    //     'assets/images/male5.jpg',
+                    //     'Michael Ince',
+                    //     5,
+                    //     r'"You put so much hard work into getting this client, and it really paid off. Thanks to your focus and determination in going the extra mile and managing all of the complexities of this project, we met our goals."',
+                    //   ),
+                    //   carouselItem(
+                    //     'assets/images/female5.jpg',
+                    //     'Donna Martin',
+                    //     5,
+                    //     r'"Even though the outcome wasn’t what we wanted, I want to congratulate you on all of the hard work you put in over the past few weeks. If we apply that same effort to our next project, I believe we can win."',
+                    //   ),
+                    //   carouselItem(
+                    //     'assets/images/male3.jpg',
+                    //     'Stephen Harris',
+                    //     4,
+                    //     r'"I really appreciated how you used check-ins to keep me up to date on your project this week. It helped me coordinate with our stakeholders, and I’m excited to share that we’re on track to launch. It’s also great to see your process. I’m impressed with the efficiencies you’re learning."',
+                    //   ),
+                    // ],
+                    options: CarouselOptions(
+                      viewportFraction: .9,
+                      height: 500,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                    ),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(40),
+                    child: Text('No feedback yet'),
+                  ),
+            (reviewList.isNotEmpty)
+                ? TextButton(
+                    onPressed: () {},
+                    child: const Text('See all reviews'),
+                  )
+                : Container(),
           ],
         ),
       );
   //rating star icon
-  Widget ratingStar(i, double size_) => Row(
+  Widget ratingStar(i, double size_, Color starColor) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           for (int x = 0; x < i; x++)
             Icon(
               Icons.star,
-              color: primaryColor,
+              color: starColor,
               size: size_,
             ),
           for (int y = 0; y < 5 - i; y++)
@@ -373,74 +440,67 @@ class CustomWidget {
 
   //Line of each message
   Widget messageLine(bool isUser, Messages messages, CurrentUser currentUser,
-          Babysitter babysitter, Function() onTap) =>
-      Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          //check if the message is from user or baby sitter
-          crossAxisAlignment:
-              (isUser) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: (messages.isClicked) ? Text(messages.time) : Container(),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment:
-                  (isUser) ? MainAxisAlignment.end : MainAxisAlignment.start,
-              children: (isUser)
-                  ? [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          (messages.isClicked)
-                              ? Text(currentUser.name.split(' ').first)
-                              : Container(),
-                          messageContainer(isUser, messages, onTap),
-                        ],
-                      ),
-                      const SizedBox(width: 5),
-                      CircleAvatar(
-                        backgroundImage: AssetImage(currentUser.img),
-                        radius: 20,
-                      ),
-                    ]
-                  : [
-                      CircleAvatar(
-                        backgroundImage: AssetImage(babysitter.img),
-                        radius: 20,
-                      ),
-                      const SizedBox(width: 5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          (messages.isClicked)
-                              ? Text(babysitter.name.split(' ').first)
-                              : Container(),
-                          messageContainer(isUser, messages, onTap),
-                        ],
-                      ),
-                    ],
-            ),
-          ],
-        ),
-      );
-
-  //fetch message list based on babysitterId_
-  List messageList(String babysitterId_, MessageData messageData) {
-    switch (babysitterId_) {
-      case 'sample':
-        return messageData.sample;
-
-      case 'helloworld':
-        return messageData.helloworld;
-
-      case 'hiearth':
-        return messageData.hiearth;
-
-      default:
-        return [];
-    }
+      Babysitter babysitter, Function() onTap) {
+    final DateTime currentDate = DateTime.now();
+    final bool isYesterday = messages.timestamp.year < currentDate.year ||
+        messages.timestamp.month < currentDate.month ||
+        messages.timestamp.day < currentDate.day;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        //check if the message is from user or baby sitter
+        crossAxisAlignment:
+            (isUser) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: (messages.isClicked)
+                ? (isYesterday)
+                    ? Text(DateFormat('yyyy MMM dd, hh:mm a')
+                        .format(messages.timestamp))
+                    : Text(DateFormat('hh:mm a').format(messages.timestamp))
+                : Container(),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment:
+                (isUser) ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: (isUser)
+                ? [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        (messages.isClicked)
+                            ? Text(currentUser.name.split(' ').first)
+                            : Container(),
+                        messageContainer(isUser, messages, onTap),
+                      ],
+                    ),
+                    const SizedBox(width: 5),
+                    CircleAvatar(
+                      backgroundImage: AssetImage(currentUser.img),
+                      radius: 20,
+                    ),
+                  ]
+                : [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(babysitter.img),
+                      radius: 20,
+                    ),
+                    const SizedBox(width: 5),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        (messages.isClicked)
+                            ? Text(babysitter.name.split(' ').first)
+                            : Container(),
+                        messageContainer(isUser, messages, onTap),
+                      ],
+                    ),
+                  ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -489,4 +549,13 @@ class OfferModal extends StatelessWidget {
       ),
     );
   }
+}
+
+class ListWithID {
+  final String id;
+  final List<Messages> data;
+  const ListWithID({
+    required this.id,
+    required this.data,
+  });
 }

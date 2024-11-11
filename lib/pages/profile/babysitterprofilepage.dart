@@ -12,6 +12,7 @@
 //NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
 //NOTE: If you want to navigate to this page, it requires babysitter ID. Just put a temporary ID 'helloworld'
 
+import 'package:babysitterapp/controller/rating.dart';
 import 'package:babysitterapp/pages/booking/requestpage.dart';
 import 'package:babysitterapp/pages/chat/chatboxpage.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,21 +24,22 @@ import 'package:flutter/material.dart';
 import '/controller/babysitter.dart';
 import '/controller/userdata.dart';
 
-class ProfilePage extends StatefulWidget {
+class BabysitterProfilePage extends StatefulWidget {
   final String babysitterId;
-  const ProfilePage({
+  const BabysitterProfilePage({
     super.key,
     required this.babysitterId,
   });
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<BabysitterProfilePage> createState() => _BabysitterProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
   UserData userData = UserData();
   CustomWidget customWidget = CustomWidget();
   late Babysitter babysitter;
+  late List<Rating> babysitterReviewList;
   late double babysitterRating;
   late int noOfReviews;
   late bool isExpanded;
@@ -48,22 +50,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
     //fetch babysitter data based on babysitterID
     babysitter = userData.babysitterList.firstWhere(
-      (babysitter) => babysitter.id == widget.babysitterId,
+      (babysitter) => babysitter.babysitterID == widget.babysitterId,
     );
 
     //fetch no. of babysitter feedback
-    var babysitterRatingsList = userData.ratingAndReviewList
-        .where((rating) => rating.id == widget.babysitterId)
+    babysitterReviewList = userData.ratingAndReviewList
+        .where((rating) => rating.babysitterID == widget.babysitterId)
         .toList();
 
-    if (babysitterRatingsList.isNotEmpty) {
+    if (babysitterReviewList.isNotEmpty) {
       double averageRating =
-          babysitterRatingsList.map((r) => r.rating).reduce((a, b) => a + b) /
-              babysitterRatingsList.length;
+          babysitterReviewList.map((r) => r.rating).reduce((a, b) => a + b) /
+              babysitterReviewList.length;
 
       babysitterRating = double.parse(averageRating.toStringAsFixed(1));
 
-      noOfReviews = babysitterRatingsList.length;
+      noOfReviews = babysitterReviewList.length;
     } else {
       babysitterRating = 0;
       noOfReviews = 0;
@@ -82,8 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(babysitter.name),
-        backgroundColor: tertiaryColor,
-        foregroundColor: textColor,
         actions: [
           IconButton(
             onPressed: () {
@@ -147,18 +147,20 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               customWidget.mainHeader(
-                babysitter.img,
                 babysitter.name,
                 babysitter.email,
+                babysitter.img,
                 babysitter.address,
-                babysitter.age,
+                babysitter.birtdate,
+                babysitter.gender,
+                babysitter.rate,
                 babysitterRating,
-                200,
                 noOfReviews,
+                102,
               ),
               customWidget.aboutHeader(
                 babysitter.name.split(' ')[0],
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ac justo venenatis, sodales nisi ac, eleifend mi. Vestibulum nec augue porta, ultrices est in, posuere diam. In scelerisque id ante a placerat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse sagittis justo quis ante venenatis pretium. Etiam imperdiet lorem erat, sed mollis nulla aliquet in. Fusce gravida tempor ex at bibendum. Curabitur porttitor erat ac leo varius vestibulum. Vivamus dapibus massa est, vitae elementum nisl fringilla id. Nunc sit amet orci dui. Mauris convallis maximus ante, ac ullamcorper nibh iaculis vel. Cras pharetra scelerisque urna eleifend facilisis. Nullam in porttitor lorem. Nunc luctus vitae odio vel semper. Aliquam erat volutpat. Quisque sodales turpis quis accumsan mattis. Praesent bibendum risus eget enim aliquam vehicula sed nec odio. Fusce turpis augue, hendrerit sit amet vestibulum eget, dapibus eget diam. Suspendisse eget iaculis ante.',
+                babysitter.description,
                 isExpanded,
                 () {
                   setState(() {
@@ -167,9 +169,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               ),
               customWidget.myDivider(),
-              customWidget.experienceHeader(),
+              customWidget.experienceHeader(babysitter.experience),
               customWidget.myDivider(),
-              customWidget.feedbackHeader(widget.babysitterId),
+              customWidget.feedbackHeader(
+                  widget.babysitterId, babysitterReviewList),
             ],
           );
         },

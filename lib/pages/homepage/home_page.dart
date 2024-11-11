@@ -2,7 +2,7 @@ import 'package:babysitterapp/pages/available/available_page.dart';
 import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/notification_page.dart';
 import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
-import 'package:babysitterapp/pages/profile/profilepage.dart';
+import 'package:babysitterapp/pages/profile/babysitterprofilepage.dart';
 import 'package:babysitterapp/pages/settings_page/settings_page.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:flutter/material.dart';
@@ -275,8 +275,8 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => const ProfilePage(
-                                  babysitterId: "sample",
+                            builder: (context) => const BabysitterProfilePage(
+                                  babysitterId: "babysitter01",
                                 )),
                       );
                     },

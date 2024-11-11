@@ -1,5 +1,5 @@
 import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/pages/rate/ratepage.dart';
+import 'package:babysitterapp/pages/rate/ratingpage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../styles/colors.dart';
