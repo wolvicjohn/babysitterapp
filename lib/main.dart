@@ -1,4 +1,4 @@
-import 'package:babysitterapp/authentication/landing_page.dart';
+import 'package:babysitterapp/authentication/check_auth_page.dart';
 import 'package:babysitterapp/authentication/login_page.dart';
 import 'package:babysitterapp/authentication/register_page.dart';
 import 'package:babysitterapp/styles/theme_data.dart';
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Baby Sitter App',
       theme: ThemeClass.theme,
-      home: const BabySitterLandingPage(),
+      home: const CheckAuthPage(),
       routes: {
         '/login': (context) => const BabySitterLoginPage(),
         '/register': (context) => const BabySitterRegisterPage(),
