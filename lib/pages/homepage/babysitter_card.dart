@@ -6,6 +6,7 @@ class BabysitterCard extends StatelessWidget {
   final double rating;
   final int reviews;
   final String profileImage;
+  final IconButton heartIcon;
 
   const BabysitterCard({
     super.key,
@@ -14,6 +15,7 @@ class BabysitterCard extends StatelessWidget {
     required this.rating,
     required this.reviews,
     this.profileImage = 'assets/avatar.png',
+    required this.heartIcon,
   });
 
   @override
@@ -52,8 +54,11 @@ class BabysitterCard extends StatelessWidget {
         ),
         subtitle: Row(
           children: [
-            Icon(Icons.star,
-                color: Theme.of(context).colorScheme.primary, size: 18),
+            Icon(
+              Icons.star,
+              color: Theme.of(context).colorScheme.primary,
+              size: 18,
+            ),
             const SizedBox(width: 4),
             Text(
               rating.toStringAsFixed(1),
@@ -69,11 +74,7 @@ class BabysitterCard extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            IconButton(
-              icon: Icon(Icons.favorite_border,
-                  color: Theme.of(context).colorScheme.primary),
-              onPressed: () {},
-            ),
+            heartIcon,
           ],
         ),
       ),
