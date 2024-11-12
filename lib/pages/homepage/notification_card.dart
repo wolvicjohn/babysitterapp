@@ -3,50 +3,55 @@ import 'package:flutter/material.dart';
 class NotificationCard extends StatelessWidget {
   final String name;
   final String time;
-  final String experience;
-  final double rating;
   final int reviews;
+  final String paymentStatus;
 
   const NotificationCard({
     super.key,
     required this.name,
     required this.time,
-    required this.experience,
-    required this.rating,
     required this.reviews,
+    required this.paymentStatus,
   });
-
-  String getProfileImage(String name) {
-    switch (name.toLowerCase()) {
-      case 'momo ayase':
-        return 'assets/images/female1.jpg';
-      case 'wayne hill':
-        return 'assets/images/male5.jpg';
-      case 'jennifer conn':
-        return 'assets/images/female2.jpg';
-      case 'evelyn larson':
-        return 'assets/images/female4.jpg';
-      default:
-        return 'assets/images/default.jpg';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: AssetImage(getProfileImage(name)),
-          radius: 25,
-        ),
-        title: Text(name),
-        subtitle: Column(
+      margin: const EdgeInsets.all(10),
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Experience: $experience'),
-            Text('Rating: $rating ★ ($reviews reviews)'),
-            Text('Last active: $time'),
+            Text(name, style: Theme.of(context).textTheme.bodyLarge),
+            Text(time, style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 8),
+            const Row(
+              children: [
+                Spacer(),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text('Reviews: $reviews',
+                style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text(
+                  'Payment Status: $paymentStatus',
+                  style: TextStyle(
+                    color: paymentStatus == 'Paid' ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  paymentStatus == 'Paid' ? Icons.check_circle : Icons.cancel,
+                  color: paymentStatus == 'Paid' ? Colors.green : Colors.red,
+                ),
+              ],
+            ),
           ],
         ),
       ),
