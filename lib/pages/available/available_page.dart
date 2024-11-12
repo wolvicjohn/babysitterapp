@@ -13,23 +13,20 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
       []; // List to store availability
 
   Future<void> _pickDateTime() async {
-    // Pick date
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
-    if (pickedDate == null) return; // If no date is picked, return
+    if (pickedDate == null) return;
 
-    // Pick time
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
-    if (pickedTime == null) return; // If no time is picked, return
+    if (pickedTime == null) return;
 
-    // Combine picked date and time
     final DateTime pickedDateTime = DateTime(
       pickedDate.year,
       pickedDate.month,
@@ -38,17 +35,12 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
       pickedTime.minute,
     );
 
-    // Format date and time for display
     final String formattedDate =
         DateFormat('MMMM dd, yyyy').format(pickedDateTime);
     final String formattedTime = DateFormat('hh:mm a').format(pickedDateTime);
 
-    // Add single availability to list
     setState(() {
-      _availability.add({
-        'date': formattedDate,
-        'time': formattedTime,
-      });
+      _availability.add({'date': formattedDate, 'time': formattedTime});
     });
   }
 
@@ -63,16 +55,10 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Schedule',
+          'Set Availability',
           style: TextStyle(fontFamily: 'Poppins'),
         ),
         backgroundColor: Colors.deepPurple,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _clearAvailability,
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -80,94 +66,114 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Set Schedule:',
+              'Add New Schedule',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontFamily: 'Poppins',
                 color: Colors.deepPurple,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             ElevatedButton.icon(
               onPressed: _pickDateTime,
-              icon: const Icon(Icons.calendar_today, color: Colors.white),
+              icon: const Icon(Icons.add, color: Colors.white),
               label: const Text(
-                'Pick a schedule',
+                'Pick a Schedule',
                 style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
+            const Divider(thickness: 1, color: Colors.grey),
+            const SizedBox(height: 10),
 
             const Text(
-              'Your Availability:',
+              'Your Availability',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontFamily: 'Poppins',
                 color: Colors.deepPurple,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
 
-            // Display availability list
+            // Availability list display
             _availability.isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _availability.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            _availability[index]['date']!,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                              color: Colors.deepPurple,
-                            ),
+                      return Dismissible(
+                        key: ValueKey(_availability[index]),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          setState(() {
+                            _availability.removeAt(index);
+                          });
+                        },
+                        child: Card(
+                          color: Colors.deepPurple[50],
+                          elevation: 4,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          subtitle: Text(
-                            _availability[index]['time']!,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14,
-                              color: Colors.grey,
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 20,
                             ),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.black),
-                            onPressed: () {
-                              setState(() {
-                                _availability.removeAt(index);
-                              });
-                            },
+                            title: Text(
+                              _availability[index]['date']!,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                            subtitle: Text(
+                              _availability[index]['time']!,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete_outline,
+                                  color: Colors.deepPurple),
+                              onPressed: () {
+                                setState(() {
+                                  _availability.removeAt(index);
+                                });
+                              },
+                            ),
                           ),
                         ),
                       );
                     },
                   )
                 : const Center(
-                    child: Text(
-                      'No availability set yet!',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 16,
-                        color: Colors.grey,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Text(
+                        'No availability set yet!',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
           ],

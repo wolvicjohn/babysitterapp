@@ -1,4 +1,4 @@
-import 'package:babysitterapp/pages/requirement/requirement_page.dart';
+import 'package:babysitterapp/pages/RequirementPage/requirement_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -14,18 +14,20 @@ class _AccountPageState extends State<AccountPage> {
   bool _isEditing = false;
   File? _profileImage;
 
-  final _fullNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _middleNameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _genderController = TextEditingController();
   final _bioController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fullNameController.text = "Emil Gee D. Añasco";
-    _emailController.text = "anasco.emilgee@dnsc.edu.ph";
-    _genderController.text = "Male";
-    _bioController.text = "No bio yet";
+    _lastNameController.text = "Dela Cruz";
+    _firstNameController.text = "Juan";
+    _middleNameController.text = "D.";
+    _emailController.text = "juandelacruz@gmail.com";
+    _bioController.text = "Hello!";
   }
 
   Future<void> _pickImage() async {
@@ -71,13 +73,9 @@ class _AccountPageState extends State<AccountPage> {
         title: const Text('Profile', style: TextStyle(fontFamily: 'Poppins')),
         backgroundColor: Colors.deepPurple,
         actions: [
-          TextButton(
+          IconButton(
+            icon: Icon(_isEditing ? Icons.check : Icons.edit),
             onPressed: _isEditing ? _saveProfile : _toggleEditMode,
-            child: Text(
-              _isEditing ? 'Save' : 'Edit',
-              style:
-                  const TextStyle(color: Colors.white, fontFamily: 'Poppins'),
-            ),
           ),
         ],
       ),
@@ -85,47 +83,6 @@ class _AccountPageState extends State<AccountPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning_amber_rounded, color: Colors.black),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "You need to verify your account.",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Reqpage(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Verify Now",
-                      style: TextStyle(
-                        color: Colors.deepPurple,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
             Stack(
               children: [
                 CircleAvatar(
@@ -150,21 +107,50 @@ class _AccountPageState extends State<AccountPage> {
               ],
             ),
             const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Reqpage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                  ),
+                  child: const Text(
+                    "Verify Account",
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
             _buildProfileField(
-              label: 'Full Name',
-              controller: _fullNameController,
+              label: 'Last Name',
+              controller: _lastNameController,
+              enabled: _isEditing,
+            ),
+            const SizedBox(height: 20),
+            _buildProfileField(
+              label: 'First Name',
+              controller: _firstNameController,
+              enabled: _isEditing,
+            ),
+            const SizedBox(height: 20),
+            _buildProfileField(
+              label: 'Middle Name',
+              controller: _middleNameController,
               enabled: _isEditing,
             ),
             const SizedBox(height: 20),
             _buildProfileField(
               label: 'Email',
               controller: _emailController,
-              enabled: _isEditing,
-            ),
-            const SizedBox(height: 20),
-            _buildProfileField(
-              label: 'Gender',
-              controller: _genderController,
               enabled: _isEditing,
             ),
             const SizedBox(height: 20),
