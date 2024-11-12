@@ -3,9 +3,7 @@
 import 'package:babysitterapp/controller/messages.dart';
 import 'package:babysitterapp/views/customwidget.dart';
 
-import 'babysitter.dart';
 import 'currentuser.dart';
-import 'rating.dart';
 
 class UserData {
   CurrentUser currentUser = CurrentUser(
@@ -117,95 +115,95 @@ class UserData {
     ],
   );
 
-  List<Babysitter> babysitterList = [
-    Babysitter(
-      babysitterID: 'babysitter01',
-      name: 'Emma Gill',
-      email: 'emmagill@gmail.com',
-      img: 'assets/images/female1.jpg',
-      address: 'Panabo City',
-      phone: '+639123456789',
-      birtdate: DateTime(2000, 01, 01),
-      gender: 'Female',
-      rate: 100,
-      description:
-          """Hello! My name is Emma, and I'm a caring, experienced babysitter with a passion for helping children learn and grow. With over 5 years of childcare experience, I’m dedicated to creating a safe, nurturing environment where kids can feel comfortable, be themselves, and have fun.
-          
-          I hold a First Aid and CPR certification and have experience with children of various age groups, from infants to pre-teens. I enjoy reading stories, playing games, and organizing creative activities that keep children engaged and entertained. I understand how important communication is, and I always keep parents updated throughout my timestamp with their children. 
-          
-          In my free timestamp, I enjoy volunteering, hiking, and baking treats for my family and friends. I look forward to meeting you and your little ones soon!""",
-      experience: [
-        'Infant Care',
-        'CPR & First Aid Certified',
-        'Meal Preparation',
-        'Homework Assistance',
-        'Behavior Management',
-      ],
-    ),
-    Babysitter(
-      babysitterID: 'babysitter02',
-      name: 'Anthony Parr',
-      email: 'anthonyparr@gmail.com',
-      img: 'assets/images/male2.jpg',
-      address: 'Davao City',
-      phone: '+639123456789',
-      birtdate: DateTime(2003, 12, 25),
-      gender: 'Male',
-      rate: 200,
-      description:
-          "Hello! My name is Anthony, and I'm a caring, experienced babysitter with a passion for helping children learn and grow. With over 5 years of childcare experience, I’m dedicated to creating a safe, nurturing environment where kids can feel comfortable, be themselves, and have fun. \nI hold a First Aid and CPR certification and have experience with children of various age groups, from infants to pre-teens. I enjoy reading stories, playing games, and organizing creative activities that keep children engaged and entertained. I understand how important communication is, and I always keep parents updated throughout my timestamp with their children. \nIn my free timestamp, I enjoy volunteering, hiking, and baking treats for my family and friends. I look forward to meeting you and your little ones soon!",
-      experience: [
-        'Infant Care',
-        'Meal Preparation',
-        'Behavior Management',
-      ],
-    ),
-  ];
+  // List<Babysitter> babysitterList = [
+  //   Babysitter(
+  //     babysitterID: 'babysitter01',
+  //     name: 'Emma Gill',
+  //     email: 'emmagill@gmail.com',
+  //     img: 'assets/images/female1.jpg',
+  //     address: 'Panabo City',
+  //     phone: '+639123456789',
+  //     birtdate: DateTime(2000, 01, 01),
+  //     gender: 'Female',
+  //     rate: 100,
+  //     description:
+  //         """Hello! My name is Emma, and I'm a caring, experienced babysitter with a passion for helping children learn and grow. With over 5 years of childcare experience, I’m dedicated to creating a safe, nurturing environment where kids can feel comfortable, be themselves, and have fun.
 
-  List<Rating> ratingAndReviewList = [
-    Rating(
-      userID: 'user1',
-      babysitterID: 'babysitter01',
-      rating: 5,
-      review: 'Very nice and friendly.',
-      timestamp: DateTime(2024, 01, 01),
-    ),
-    Rating(
-      userID: 'user1',
-      babysitterID: 'babysitter01',
-      rating: 5,
-      review: 'Very nice and friendly.',
-      timestamp: DateTime(2024, 01, 01),
-      images: [
-        'assets/images/female5.jpg',
-      ],
-    ),
-    Rating(
-      userID: 'user1',
-      babysitterID: 'babysitter01',
-      rating: 5,
-      review: 'Very nice and friendly.',
-      timestamp: DateTime(2024, 01, 01),
-      images: [
-        'assets/images/male1.jpg',
-        'assets/images/male2.jpg',
-      ],
-    ),
-    Rating(
-      userID: 'user1',
-      babysitterID: 'babysitter01',
-      rating: 5,
-      review:
-          'Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.',
-      timestamp: DateTime(2024, 01, 01),
-      images: [
-        'assets/images/female1.jpg',
-        'assets/images/female2.jpg',
-        'assets/images/female3.jpg',
-        'assets/images/female4.jpg',
-      ],
-    ),
-  ];
+  //         I hold a First Aid and CPR certification and have experience with children of various age groups, from infants to pre-teens. I enjoy reading stories, playing games, and organizing creative activities that keep children engaged and entertained. I understand how important communication is, and I always keep parents updated throughout my timestamp with their children.
+
+  //         In my free timestamp, I enjoy volunteering, hiking, and baking treats for my family and friends. I look forward to meeting you and your little ones soon!""",
+  //     experience: [
+  //       'Infant Care',
+  //       'CPR & First Aid Certified',
+  //       'Meal Preparation',
+  //       'Homework Assistance',
+  //       'Behavior Management',
+  //     ],
+  //   ),
+  //   Babysitter(
+  //     babysitterID: 'babysitter02',
+  //     name: 'Anthony Parr',
+  //     email: 'anthonyparr@gmail.com',
+  //     img: 'assets/images/male2.jpg',
+  //     address: 'Davao City',
+  //     phone: '+639123456789',
+  //     birtdate: DateTime(2003, 12, 25),
+  //     gender: 'Male',
+  //     rate: 200,
+  //     description:
+  //         "Hello! My name is Anthony, and I'm a caring, experienced babysitter with a passion for helping children learn and grow. With over 5 years of childcare experience, I’m dedicated to creating a safe, nurturing environment where kids can feel comfortable, be themselves, and have fun. \nI hold a First Aid and CPR certification and have experience with children of various age groups, from infants to pre-teens. I enjoy reading stories, playing games, and organizing creative activities that keep children engaged and entertained. I understand how important communication is, and I always keep parents updated throughout my timestamp with their children. \nIn my free timestamp, I enjoy volunteering, hiking, and baking treats for my family and friends. I look forward to meeting you and your little ones soon!",
+  //     experience: [
+  //       'Infant Care',
+  //       'Meal Preparation',
+  //       'Behavior Management',
+  //     ],
+  //   ),
+  // ];
+
+  // List<Rating> ratingAndReviewList = [
+  //   Rating(
+  //     userID: 'user1',
+  //     babysitterID: 'babysitter01',
+  //     rating: 5,
+  //     review: 'Very nice and friendly.',
+  //     timestamp: DateTime(2024, 01, 01),
+  //   ),
+  //   Rating(
+  //     userID: 'user1',
+  //     babysitterID: 'babysitter01',
+  //     rating: 5,
+  //     review: 'Very nice and friendly.',
+  //     timestamp: DateTime(2024, 01, 01),
+  //     images: [
+  //       'assets/images/female5.jpg',
+  //     ],
+  //   ),
+  //   Rating(
+  //     userID: 'user1',
+  //     babysitterID: 'babysitter01',
+  //     rating: 5,
+  //     review: 'Very nice and friendly.',
+  //     timestamp: DateTime(2024, 01, 01),
+  //     images: [
+  //       'assets/images/male1.jpg',
+  //       'assets/images/male2.jpg',
+  //     ],
+  //   ),
+  //   Rating(
+  //     userID: 'user1',
+  //     babysitterID: 'babysitter01',
+  //     rating: 5,
+  //     review:
+  //         'Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.Very nice and friendly.',
+  //     timestamp: DateTime(2024, 01, 01),
+  //     images: [
+  //       'assets/images/female1.jpg',
+  //       'assets/images/female2.jpg',
+  //       'assets/images/female3.jpg',
+  //       'assets/images/female4.jpg',
+  //     ],
+  //   ),
+  // ];
 
   List<String> offerList = [
     '100',

@@ -276,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (context) => const BabysitterProfilePage(
-                                  babysitterId: "babysitter01",
+                                  babysitterID: "samplebabysitter01",
                                 )),
                       );
                     },
@@ -286,6 +286,23 @@ class _HomePageState extends State<HomePage> {
                       rating: 4.3,
                       reviews: 90,
                       profileImage: 'assets/images/female1.jpg',
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const BabysitterProfilePage(
+                                  babysitterID: "samplebabysitter02",
+                                )),
+                      );
+                    },
+                    child: const BabysitterCard(
+                      name: 'Andy Ryraku',
+                      rate: 'Php 200/hr',
+                      rating: 4.3,
+                      reviews: 90,
+                      profileImage: 'assets/images/female5.jpg',
                     ),
                   ),
                   const BabysitterCard(

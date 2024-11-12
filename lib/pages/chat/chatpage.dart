@@ -1,11 +1,13 @@
+import 'package:babysitterapp/services/firestore.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '/controller/babysitter.dart';
+import '../../controller/user.dart';
 import '/controller/userdata.dart';
 import 'chatboxpage.dart';
 
 class ChatPage extends StatefulWidget {
+  final String currentUserID = 'sampleuser01';
   const ChatPage({super.key});
 
   @override
@@ -13,8 +15,9 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  FirestoreService firestoreService = FirestoreService();
+  late List? chatList;
   UserData userData = UserData();
-  String babysitterId = '';
   late bool isLongPressed;
   List<String> selectedBabysitterId = [];
 
@@ -22,6 +25,29 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     isLongPressed = false;
+    chatList = null;
+    fetchChatList();
+  }
+
+  //fetch chat list of the current user
+  Future<void> fetchChatList() async {
+    chatList = await firestoreService.getChatListID(widget.currentUserID);
+    setState(() {});
+  }
+
+  // Helper function to fetch each recipient’s data
+  Future<List<Widget>> _fetchRecipients() async {
+    List<Widget> recipientWidgets = [];
+
+    for (String recipientID in chatList!) {
+      // Fetch recipient data
+      var recipient = await FirestoreService().getUserData(recipientID);
+
+      // Add a widget to the list for each recipient
+      if (recipient != null) recipientWidgets.add(babysitterList(recipient));
+    }
+
+    return recipientWidgets;
   }
 
   @override
@@ -29,44 +55,31 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
-  //check if the current user has previous conversation of the babysitter
-  bool userHasMessages(String babysitterID) {
-    return userData.currentUser.messages
-        .any((listWithID) => listWithID.id == babysitterID);
-  }
-
-  //list of babysitter in the chat page
-  Widget babysitterList(Babysitter babysitter) => InkWell(
+  //list item of chat of the current user
+  Widget babysitterList(User recipient) => InkWell(
         onTap: () {
           if (isLongPressed) {
             setState(() {
               //Add or remove babysitter id to the selected list
-              if (selectedBabysitterId.contains(babysitter.babysitterID)) {
-                selectedBabysitterId.remove(babysitter.babysitterID);
+              if (selectedBabysitterId.contains(recipient.id)) {
+                selectedBabysitterId.remove(recipient.id);
               } else {
-                selectedBabysitterId.add(babysitter.babysitterID);
+                selectedBabysitterId.add(recipient.id);
               }
             });
           } else {
-            // Check which babysitter is clicked by the current user
-            setState(() {
-              babysitter.isClicked = true;
-
-              if (babysitter.isClicked!) {
-                babysitterId = babysitter.babysitterID;
-              }
-            });
-
             // Navigate to the chat box of the clicked babysitter
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChatBoxPage(babysitterId_: babysitterId),
+              builder: (context) => ChatBoxPage(
+                recipientID: recipient.id,
+              ),
             ));
           }
         },
         onLongPress: () {
           setState(() {
             //Add babysitter id to the selected list
-            selectedBabysitterId.add(babysitter.babysitterID);
+            selectedBabysitterId.add(recipient.id);
             isLongPressed = true;
           });
         },
@@ -78,22 +91,22 @@ class _ChatPageState extends State<ChatPage> {
               //if longpressed is true diplay the checkbox
               if (isLongPressed)
                 Checkbox(
-                  value: selectedBabysitterId.contains(babysitter.babysitterID),
+                  value: selectedBabysitterId.contains(recipient.id),
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
                         //Add babysitter id to the selected list
-                        selectedBabysitterId.add(babysitter.babysitterID);
+                        selectedBabysitterId.add(recipient.id);
                       } else {
                         //Remove babysitter id to the selected list
-                        selectedBabysitterId.remove(babysitter.babysitterID);
+                        selectedBabysitterId.remove(recipient.id);
                       }
                     });
                   },
                 ),
               CircleAvatar(
                 radius: 30,
-                backgroundImage: AssetImage(babysitter.img),
+                backgroundImage: AssetImage(recipient.img),
               ),
               const SizedBox(width: 15),
               Expanded(
@@ -102,13 +115,13 @@ class _ChatPageState extends State<ChatPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      babysitter.name,
+                      recipient.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(babysitter.email),
+                    Text(recipient.email),
                   ],
                 ),
               ),
@@ -170,13 +183,26 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ],
             ),
-      body: ListView(
-        children: userData.babysitterList
-            .where((babysitter) => userHasMessages(babysitter.babysitterID))
-            .map((babysitter) {
-          return babysitterList(babysitter);
-        }).toList(),
-      ),
+      body: (chatList != null)
+          ? FutureBuilder<List<Widget>>(
+              future: _fetchRecipients(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No recipients found.'));
+                }
+
+                // Display the list of recipients as widgets
+                return ListView(
+                  children: snapshot.data!,
+                );
+              },
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

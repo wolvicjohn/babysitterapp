@@ -1,22 +1,25 @@
 //NOTE: This is temporary babysitter data fields
 
-class Babysitter {
-  final String babysitterID;
+class User {
+  final String id;
   final String name;
   final String email;
   final String img;
   final String address;
-  final String phone;
+  final int phone;
   final DateTime birtdate;
   final String gender;
   final int rate;
   final String description;
   final List experience;
+  final String userType;
+  final String information;
+  final int? childAge;
 
   bool? isClicked = false;
 
-  Babysitter({
-    required this.babysitterID,
+  User({
+    required this.id,
     required this.name,
     required this.email,
     required this.img,
@@ -27,6 +30,9 @@ class Babysitter {
     required this.rate,
     required this.description,
     required this.experience,
+    required this.userType,
+    required this.information,
+    required this.childAge,
     this.isClicked,
   });
 }

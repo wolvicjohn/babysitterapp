@@ -1,18 +1,18 @@
 import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/controller/babysitter.dart';
-import 'package:babysitterapp/controller/currentuser.dart';
-import 'package:babysitterapp/controller/rating.dart';
+import 'package:babysitterapp/controller/feedback.dart';
+import 'package:babysitterapp/controller/user.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../controller/messages.dart';
+import '../services/firestore.dart';
 import '../styles/colors.dart';
 
 //floating button for profile page
 class CustomWidget {
+  final FirestoreService firestoreService = FirestoreService();
   Widget floatingBtn(
-    context,
     Function() onPressed,
     Color backgroundColor,
     Color borderColor,
@@ -154,22 +154,28 @@ class CustomWidget {
                 style: whiteTextColor(),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ratingStar(rating.toInt(), 30, Colors.amber),
-                  Text(
-                    rating.toString(),
-                    style: whiteTextColor(),
-                  ),
-                ],
-              ),
+              (rating != 0)
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ratingStar(rating.toInt(), 30, Colors.amber),
+                        Text(
+                          rating.toString(),
+                          style: whiteTextColor(),
+                        ),
+                      ],
+                    )
+                  : Container(),
               TextButton(
                 onPressed: () {
                   //go to reviews list
                 },
                 child: Text(
-                  '$reviewsNo reviews',
+                  (reviewsNo > 1)
+                      ? '$reviewsNo reviews'
+                      : (reviewsNo == 1)
+                          ? '$reviewsNo review'
+                          : 'No reviews yet',
                   style: const TextStyle(
                     color: backgroundColor,
                     fontWeight: FontWeight.bold,
@@ -242,7 +248,7 @@ class CustomWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                userAbout,
+                (userAbout != '') ? userAbout : 'No data yet.',
                 textAlign: TextAlign.justify,
                 maxLines: isExpanded ? null : 5,
                 overflow:
@@ -253,9 +259,11 @@ class CustomWidget {
                 children: [
                   IconButton(
                     onPressed: onPressed,
-                    icon: (isExpanded)
-                        ? const Icon(CupertinoIcons.chevron_up)
-                        : const Icon(CupertinoIcons.chevron_down),
+                    icon: (userAbout != '')
+                        ? (isExpanded)
+                            ? const Icon(CupertinoIcons.chevron_up)
+                            : const Icon(CupertinoIcons.chevron_down)
+                        : Container(),
                   ),
                 ],
               ),
@@ -277,95 +285,85 @@ class CustomWidget {
               ),
             ),
             const SizedBox(height: 5),
-            Column(
-              children: experience.map((experience) {
-                return Row(
-                  children: [
-                    const Icon(CupertinoIcons.checkmark_alt),
-                    const SizedBox(width: 5),
-                    Text(experience),
-                  ],
-                );
-              }).toList(),
-            ),
+            (experience != [])
+                ? Column(
+                    children: experience.map((experience) {
+                      return Row(
+                        children: [
+                          const Icon(CupertinoIcons.checkmark_alt),
+                          const SizedBox(width: 5),
+                          Text(experience),
+                        ],
+                      );
+                    }).toList(),
+                  )
+                : const Text('No experience yet'),
           ],
         ),
       );
   //feedback header for profile page
-  Widget feedbackHeader(String babysitterId_, List<Rating> reviewList) =>
-      Container(
-        margin: const EdgeInsets.fromLTRB(20, 20, 20, 60),
-        child: Column(
-          children: [
-            const Text(
-              'Feedback',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+  feedbackHeader(String babysitterId_, List<FeedBack>? feedbackList) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 20, 20, 60),
+      child: Column(
+        children: [
+          const Text(
+            'Feedback',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
-            (reviewList.isNotEmpty)
-                ? CarouselSlider(
-                    items: reviewList.map((rating) {
-                      return carouselItem(
-                          'assets/images/female1.jpg',
-                          'Sample User',
-                          rating.rating,
-                          rating.review,
-                          rating.images);
-                    }).toList(),
-                    // [
-                    //   carouselItem(
-                    //     'assets/images/male4.jpg',
-                    //     'William Smith',
-                    //     5,
-                    //     r'"I can tell how hard you’ve worked to be more collaborative during meetings. Yesterday, although you disagreed with David’s idea, you asked some good questions first. Your critiques are more powerful than they used to be. You’ve come a long way, and the team is better for it."',
-                    //   ),
-                    //   carouselItem(
-                    //     'assets/images/female2.jpg',
-                    //     'Victoria	Bell',
-                    //     4,
-                    //     r'"Your ability to work across teams and departments is a strength not everyone has. I’m impressed with the way you’re working to dismantle silos. For example, when you drew the marketing team into our conversations, it sharpened our ideas and helped us meet goals faster. Keep up the good work."',
-                    //   ),
-                    //   carouselItem(
-                    //     'assets/images/male5.jpg',
-                    //     'Michael Ince',
-                    //     5,
-                    //     r'"You put so much hard work into getting this client, and it really paid off. Thanks to your focus and determination in going the extra mile and managing all of the complexities of this project, we met our goals."',
-                    //   ),
-                    //   carouselItem(
-                    //     'assets/images/female5.jpg',
-                    //     'Donna Martin',
-                    //     5,
-                    //     r'"Even though the outcome wasn’t what we wanted, I want to congratulate you on all of the hard work you put in over the past few weeks. If we apply that same effort to our next project, I believe we can win."',
-                    //   ),
-                    //   carouselItem(
-                    //     'assets/images/male3.jpg',
-                    //     'Stephen Harris',
-                    //     4,
-                    //     r'"I really appreciated how you used check-ins to keep me up to date on your project this week. It helped me coordinate with our stakeholders, and I’m excited to share that we’re on track to launch. It’s also great to see your process. I’m impressed with the efficiencies you’re learning."',
-                    //   ),
-                    // ],
-                    options: CarouselOptions(
-                      viewportFraction: .9,
-                      height: 500,
-                      autoPlay: true,
-                      enlargeCenterPage: true,
-                    ),
-                  )
-                : const Padding(
-                    padding: EdgeInsets.all(40),
-                    child: Text('No feedback yet'),
+          ),
+          (feedbackList != null)
+              ? CarouselSlider(
+                  items: feedbackList.map((feedback) {
+                    return FutureBuilder(
+                      future: firestoreService.getUserData(
+                          feedback.id), // Fetch user data for each feedback
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator(); // Loading indicator
+                        }
+                        if (!snapshot.hasData) {
+                          return const Text('Error loading user data');
+                        }
+
+                        // Assuming user data model has fields `img` and `name`
+                        User? user = snapshot.data;
+
+                        return carouselItem(
+                          user!.img,
+                          user.name,
+                          feedback.rating,
+                          feedback.feedbackMsg ?? '',
+                          feedback.images,
+                        );
+                      },
+                    );
+                  }).toList(),
+                  options: CarouselOptions(
+                    viewportFraction: .9,
+                    height: 500,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
                   ),
-            (reviewList.isNotEmpty)
-                ? TextButton(
-                    onPressed: () {},
-                    child: const Text('See all reviews'),
-                  )
-                : Container(),
-          ],
-        ),
-      );
+                )
+              : const Padding(
+                  padding: EdgeInsets.all(40),
+                  child: Text('No feedback yet'),
+                ),
+          (feedbackList != null)
+              ? TextButton(
+                  onPressed: () {},
+                  child: const Text('See all reviews'),
+                )
+              : Container(),
+        ],
+      ),
+    );
+  }
+
   //rating star icon
   Widget ratingStar(i, double size_, Color starColor) => Row(
         mainAxisSize: MainAxisSize.min,
@@ -439,8 +437,8 @@ class CustomWidget {
       );
 
   //Line of each message
-  Widget messageLine(bool isUser, Messages messages, CurrentUser currentUser,
-      Babysitter babysitter, Function() onTap) {
+  Widget messageLine(bool isUser, Messages messages, User? currentUser,
+      User? recipient, Function() onTap) {
     final DateTime currentDate = DateTime.now();
     final bool isYesterday = messages.timestamp.year < currentDate.year ||
         messages.timestamp.month < currentDate.month ||
@@ -470,20 +468,20 @@ class CustomWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         (messages.isClicked)
-                            ? Text(currentUser.name.split(' ').first)
+                            ? Text(currentUser!.name.split(' ').first)
                             : Container(),
                         messageContainer(isUser, messages, onTap),
                       ],
                     ),
                     const SizedBox(width: 5),
                     CircleAvatar(
-                      backgroundImage: AssetImage(currentUser.img),
+                      backgroundImage: AssetImage(currentUser!.img),
                       radius: 20,
                     ),
                   ]
                 : [
                     CircleAvatar(
-                      backgroundImage: AssetImage(babysitter.img),
+                      backgroundImage: AssetImage(recipient!.img),
                       radius: 20,
                     ),
                     const SizedBox(width: 5),
@@ -491,7 +489,7 @@ class CustomWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         (messages.isClicked)
-                            ? Text(babysitter.name.split(' ').first)
+                            ? Text(recipient.name.split(' ').first)
                             : Container(),
                         messageContainer(isUser, messages, onTap),
                       ],

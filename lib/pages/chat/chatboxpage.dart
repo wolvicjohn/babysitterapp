@@ -1,31 +1,33 @@
 import 'package:babysitterapp/controller/messages.dart';
+import 'package:babysitterapp/pages/profile/babysitterprofilepage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
-
 import 'package:flutter/material.dart';
-
-import '../../controller/babysitter.dart';
-import '../../controller/currentuser.dart';
+import '../../controller/user.dart';
 import '../../controller/userdata.dart';
+import '../../services/firestore.dart';
 import '../../views/customwidget.dart';
 
 class ChatBoxPage extends StatefulWidget {
-  final String babysitterId_;
-  const ChatBoxPage({super.key, required this.babysitterId_});
+  final String recipientID;
+  final String currentUserID = 'sampleuser01';
+  const ChatBoxPage({
+    super.key,
+    required this.recipientID,
+  });
 
   @override
   State<ChatBoxPage> createState() => _ChatBoxPageState();
 }
 
 class _ChatBoxPageState extends State<ChatBoxPage> {
+  FirestoreService firestoreService = FirestoreService();
+  late User? currentUser;
+  late User? recipient;
   final UserData userData = UserData();
   final CustomWidget customWidget = CustomWidget();
-  //fetch babysitter data based on babysitterId_
-  late Babysitter babysitter = userData.babysitterList.firstWhere(
-    (babysitter) => babysitter.babysitterID == widget.babysitterId_,
-  );
+
   //fetch current user data
-  late CurrentUser currentUser = userData.currentUser;
   late List<Messages> messageList;
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
@@ -34,15 +36,23 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
   @override
   void initState() {
     super.initState();
+    currentUser = null;
+    recipient = null;
+    messageList = [
+      Messages(id: '', msg: '', timestamp: DateTime(0, 0, 0), isClicked: false)
+    ];
+    fetchData();
     WidgetsBinding.instance.addPostFrameCallback((_) => scrollToBottom());
     selectedOffer = userData.offerList.first;
-    messageList = userData.currentUser.messages
-        .firstWhere(
-          (listWithID) => listWithID.id == widget.babysitterId_,
-          orElse: () =>
-              const ListWithID(id: '', data: []), // Fallback if not found
-        )
-        .data;
+  }
+
+//fetch data based on id
+  Future<void> fetchData() async {
+    currentUser = await firestoreService.getUserData(widget.currentUserID);
+    recipient = await firestoreService.getUserData(widget.recipientID);
+    messageList = await firestoreService.getMessages(
+        widget.currentUserID, widget.recipientID);
+    setState(() {});
   }
 
   //fetch messages
@@ -51,7 +61,7 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
     return ListView(
       controller: scrollController,
       children: messageList.map((messages) {
-        bool isUser = currentUser.id == messages.id;
+        bool isUser = currentUser!.id == messages.id;
 
         onTap() {
           setState(() {
@@ -63,7 +73,7 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
         return Column(
           children: [
             customWidget.messageLine(
-                isUser, messages, currentUser, babysitter, onTap),
+                isUser, messages, currentUser, recipient, onTap),
           ],
         );
       }).toList(),
@@ -71,9 +81,9 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
   }
 
   //store current user new message
-  addMessage(String message) {
+  addMessage(String message) async {
     Messages newMessage = Messages(
-      id: currentUser.id,
+      id: currentUser!.id,
       msg: message,
       timestamp: DateTime.now(),
       isClicked: false,
@@ -84,6 +94,20 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       scrollToBottom();
     });
+
+    // Add the message to current user message collection
+    await firestoreService.addMessageToFirestore(
+      widget.currentUserID,
+      widget.recipientID,
+      newMessage,
+    );
+
+    // Add the message to recipient message collection
+    await firestoreService.addMessageToFirestore(
+      widget.recipientID,
+      widget.currentUserID,
+      newMessage,
+    );
   }
 
   //scroll to most recent message
@@ -101,103 +125,127 @@ class _ChatBoxPageState extends State<ChatBoxPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(babysitter.name),
-        leading: IconButton(
-          onPressed: () {
-            setState(() {
-              babysitter.isClicked = false;
-              Navigator.pop(context);
-            });
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
-      ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            Expanded(child: fetchMessage()),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              //message field
-              child: TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  hintText: 'Message',
-                  suffixIcon: SizedBox(
-                    width: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            //send offer function
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return OfferModal(
-                                      iconOnPressed: () {
-                                        setState(() {
-                                          selectedOffer =
-                                              userData.offerList.first;
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                      children: userData.offerList.map((offer) {
-                                        return RadioListTile<String>(
-                                          title: Text('PHP $offer/hr'),
-                                          value: offer,
-                                          groupValue: selectedOffer,
-                                          onChanged: (String? value) {
-                                            setState(() {
-                                              selectedOffer = value!;
-                                            });
-                                          },
-                                        );
-                                      }).toList(),
-                                      buttonOnPressed: () {
-                                        addMessage(
-                                            'Offer: PHP $selectedOffer/hr');
-                                        setState(() {
-                                          selectedOffer =
-                                              userData.offerList.first;
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.local_offer),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            //add message function
-                            if (messageController.text.isNotEmpty) {
-                              addMessage(messageController.text);
-                            }
-                            messageController.clear();
-                          },
-                          icon: const Icon(CupertinoIcons.paperplane_fill),
-                        ),
-                      ],
+    return (recipient != null || currentUser != null)
+        ? Scaffold(
+            appBar: AppBar(
+              title: InkWell(
+                onTap:
+                    () => // Navigate to the chat box of the clicked babysitter
+                        Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      BabysitterProfilePage(babysitterID: recipient!.id),
+                )),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(recipient!.img),
                     ),
-                  ),
+                    const SizedBox(width: 10),
+                    Text(recipient!.name),
+                  ],
                 ),
               ),
+              leading: IconButton(
+                onPressed: () {
+                  setState(() {
+                    recipient!.isClicked = false;
+                    Navigator.pop(context);
+                  });
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+            body: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  Expanded(child: fetchMessage()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    //message field
+                    child: TextField(
+                      controller: messageController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        hintText: 'Message',
+                        suffixIcon: SizedBox(
+                          width: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  //send offer function
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return OfferModal(
+                                            iconOnPressed: () {
+                                              setState(() {
+                                                selectedOffer =
+                                                    userData.offerList.first;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                            children:
+                                                userData.offerList.map((offer) {
+                                              return RadioListTile<String>(
+                                                title: Text('PHP $offer/hr'),
+                                                value: offer,
+                                                groupValue: selectedOffer,
+                                                onChanged: (String? value) {
+                                                  setState(() {
+                                                    selectedOffer = value!;
+                                                  });
+                                                },
+                                              );
+                                            }).toList(),
+                                            buttonOnPressed: () {
+                                              addMessage(
+                                                  'Offer: PHP $selectedOffer/hr');
+                                              setState(() {
+                                                selectedOffer =
+                                                    userData.offerList.first;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.local_offer),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  //add message function
+                                  if (messageController.text.isNotEmpty) {
+                                    addMessage(messageController.text);
+                                  }
+                                  messageController.clear();
+                                },
+                                icon:
+                                    const Icon(CupertinoIcons.paperplane_fill),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
   }
 }
