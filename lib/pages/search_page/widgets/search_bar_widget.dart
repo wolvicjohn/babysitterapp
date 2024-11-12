@@ -60,10 +60,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           ),
           child: Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: accentColor),
-                onPressed: widget.onBackPressed,
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.arrow_back, color: accentColor),
+              //   onPressed: widget.onBackPressed,
+              // ),
               Expanded(
                 child: TextField(
                   controller: widget.searchController,
