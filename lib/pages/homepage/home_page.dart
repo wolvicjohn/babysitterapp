@@ -19,6 +19,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final int _unreadNotifications = 4;
+  late Widget? selectedBody;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedBody = null;
+  }
 
   List<Widget> _widgetOptions(BuildContext context) => [
         Center(
@@ -50,80 +57,93 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-    });
 
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const BabysitterViewLocation(),
-        ),
-      );
-    }
+      switch (index) {
+        case 0:
+          selectedBody = null;
+          break;
+        case 1:
+          selectedBody = const ChatPage();
+          break;
+        case 2:
+          selectedBody = const BabysitterViewLocation();
+          break;
+        case 3:
+          selectedBody = const SettingsPage();
+          break;
+        default:
+          selectedBody = null;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            InkWell(
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/images/male1.jpg'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text('Hi, Sebastian', style: Theme.of(context).textTheme.bodyLarge),
-          ],
-        ),
-        actions: [
-          Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(
-            'The current location is unknown',
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-          ),
-          const SizedBox(width: 8),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications,
-                    color: Theme.of(context).colorScheme.secondary),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationPage(),
-                    ),
-                  );
-                },
-              ),
-              if (_unreadNotifications > 0)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.red,
-                    child: Text(
-                      '$_unreadNotifications',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
+      appBar: (selectedBody == null)
+          ? AppBar(
+              title: Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    child: const CircleAvatar(
+                      backgroundImage: AssetImage('assets/images/male1.jpg'),
                     ),
                   ),
+                  const SizedBox(width: 10),
+                  Text('Hi, Sebastian',
+                      style: Theme.of(context).textTheme.bodyLarge),
+                ],
+              ),
+              actions: [
+                Icon(Icons.location_on,
+                    color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  'The current location is unknown',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
-            ],
-          ),
-        ],
-      ),
+                const SizedBox(width: 8),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.notifications,
+                          color: Theme.of(context).colorScheme.secondary),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    if (_unreadNotifications > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            '$_unreadNotifications',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            )
+          : null,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -229,123 +249,118 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              color: Theme.of(context).colorScheme.secondary,
-              child: ListTile(
-                leading: Icon(Icons.article,
-                    color: Theme.of(context).colorScheme.onSecondary),
-                title: Text(
-                  'Overview',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-                subtitle: Text(
-                  'Connects parents to local, background-checked babysitters...',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-                trailing: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.tertiary,
-                  ),
-                  child: Text('Read article',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onTertiary,
-                      )),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Top rated',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            Expanded(
-              child: ListView(
+      body: (selectedBody == null)
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const BabysitterProfilePage(
-                                  babysitterID: "samplebabysitter01",
-                                )),
-                      );
-                    },
-                    child: const BabysitterCard(
-                      name: 'Emma Gil',
-                      rate: 'Php 200/hr',
-                      rating: 4.3,
-                      reviews: 90,
-                      profileImage: 'assets/images/female1.jpg',
+                  Card(
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: ListTile(
+                      leading: Icon(Icons.article,
+                          color: Theme.of(context).colorScheme.onSecondary),
+                      title: Text(
+                        'Overview',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Connects parents to local, background-checked babysitters...',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.tertiary,
+                        ),
+                        child: Text('Read article',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onTertiary,
+                            )),
+                      ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const BabysitterProfilePage(
-                                  babysitterID: "samplebabysitter02",
-                                )),
-                      );
-                    },
-                    child: const BabysitterCard(
-                      name: 'Andy Ryraku',
-                      rate: 'Php 200/hr',
-                      rating: 4.3,
-                      reviews: 90,
-                      profileImage: 'assets/images/female5.jpg',
+                  const SizedBox(height: 20),
+                  Text(
+                    'Top rated',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BabysitterProfilePage(
+                                        babysitterID: "samplebabysitter01",
+                                      )),
+                            );
+                          },
+                          child: const BabysitterCard(
+                            name: 'Emma Gil',
+                            rate: 'Php 200/hr',
+                            rating: 4.3,
+                            reviews: 90,
+                            profileImage: 'assets/images/female1.jpg',
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BabysitterProfilePage(
+                                        babysitterID: "samplebabysitter02",
+                                      )),
+                            );
+                          },
+                          child: const BabysitterCard(
+                            name: 'Andy Ryraku',
+                            rate: 'Php 200/hr',
+                            rating: 4.3,
+                            reviews: 90,
+                            profileImage: 'assets/images/female5.jpg',
+                          ),
+                        ),
+                        const BabysitterCard(
+                          name: 'Ken Takakura',
+                          rate: 'Php 200/hr',
+                          rating: 4.7,
+                          reviews: 140,
+                          profileImage: 'assets/images/male3.jpg',
+                        ),
+                        const BabysitterCard(
+                          name: 'Granny',
+                          rate: 'Php 200/hr',
+                          rating: 4.9,
+                          reviews: 404,
+                          profileImage: 'assets/images/female2.jpg',
+                        ),
+                      ],
                     ),
-                  ),
-                  const BabysitterCard(
-                    name: 'Ken Takakura',
-                    rate: 'Php 200/hr',
-                    rating: 4.7,
-                    reviews: 140,
-                    profileImage: 'assets/images/male3.jpg',
-                  ),
-                  const BabysitterCard(
-                    name: 'Granny',
-                    rate: 'Php 200/hr',
-                    rating: 4.9,
-                    reviews: 404,
-                    profileImage: 'assets/images/female2.jpg',
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : selectedBody,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         backgroundColor: Colors.black,
         selectedItemColor: Theme.of(context).colorScheme.tertiary,
         unselectedItemColor: Colors.grey,
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: IconButton(
-                icon: const Icon(Icons.message),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const ChatPage()),
-                  );
-                },
-              ),
-              label: 'Messages'),
-          const BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Profile'),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Message'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

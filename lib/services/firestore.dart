@@ -129,7 +129,7 @@ class FirestoreService {
 
       // Save the message to Firestore with a unique ID (e.g., by using the timestamp as a key)
       await feedbackDoc.set(
-        {currentUserID: feedbackData},
+        feedbackData,
         SetOptions(merge: false),
       );
     } on FirebaseException catch (e) {
@@ -138,19 +138,19 @@ class FirestoreService {
   }
 
   //fetch feedback list for babysitter
-  Future<List<FeedBack>> getFeedbacks(String babysitterId) async {
+  Future<List<FeedBack>> getFeedbackList(String babysitterId) async {
     List<FeedBack> feedbackList = [];
 
     QuerySnapshot querySnapshot =
         await users.doc(babysitterId).collection('feedbacks').get();
 
     for (var doc in querySnapshot.docs) {
+      // Convert each document data into a FeedBack instance
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      feedbackList.add(FeedBack.fromMap(data));
+      FeedBack feedback = FeedBack.fromMap(
+          data..['id'] = doc.id); // Use document ID as feedback ID
+      feedbackList.add(feedback);
     }
-
-    // Sort feedbacks by timestamp
-    feedbackList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
     return feedbackList;
   }

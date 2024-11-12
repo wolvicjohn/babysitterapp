@@ -51,28 +51,21 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
     fetchUserData();
     babysitter = null;
     feedbackList = [];
-
-    if (feedbackList != null) {
-      int totalRating =
-          feedbackList!.fold(0, (sum, feedback) => sum + feedback.rating);
-
-      double averageRating = totalRating / feedbackList!.length;
-
-      babysitterRating = 5;
-
-      noOfReviews = feedbackList!.length;
-    } else {
-      babysitterRating = 0;
-      noOfReviews = 0;
-    }
-
+    babysitterRating = 0;
+    noOfReviews = 0;
     isExpanded = false;
   }
 
   //fetch babysitter data based on babysitterID
   Future<void> fetchUserData() async {
     babysitter = await firestoreService.getUserData(widget.babysitterID);
-    feedbackList = await firestoreService.getFeedbacks(widget.babysitterID);
+    feedbackList = await firestoreService.getFeedbackList(widget.babysitterID);
+    if (feedbackList != null && feedbackList!.isNotEmpty) {
+      noOfReviews = feedbackList!.length;
+      babysitterRating =
+          (feedbackList!.fold(0, (sum, item) => sum + item.rating)) /
+              feedbackList!.length;
+    }
     setState(() {});
   }
 

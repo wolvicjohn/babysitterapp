@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:babysitterapp/components/button.dart';
 import 'package:babysitterapp/controller/feedback.dart';
 import 'package:babysitterapp/controller/user.dart';
@@ -23,7 +25,6 @@ class CustomWidget {
       ElevatedButton.icon(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-            fixedSize: const Size.fromWidth(180),
             backgroundColor: backgroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -39,8 +40,8 @@ class CustomWidget {
       );
 
 //carousel item for feedback header
-  Widget carouselItem(
-      String img, String name, int rating, String feedback, List? images) {
+  Widget carouselItem(BuildContext context, String img, String name, int rating,
+      String feedback, List? images) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -67,11 +68,44 @@ class CustomWidget {
                 ? images.map((image) {
                     return Padding(
                       padding: const EdgeInsets.all(3),
-                      child: Image.asset(
-                        image,
-                        height: (images.length == 1) ? 250 : 150,
-                        width: (images.length == 1) ? 250 : 150,
-                        fit: BoxFit.cover,
+                      child: InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              backgroundColor: backgroundColor.withOpacity(0),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Image.asset(
+                                    image,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  Positioned(
+                                    top: 1.0,
+                                    left: 1.0,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.clear,
+                                        color: backgroundColor,
+                                        size: 30,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          image,
+                          height: (images.length == 1) ? 250 : 120,
+                          width: (images.length == 1) ? 250 : 120,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     );
                   }).toList()
@@ -333,10 +367,11 @@ class CustomWidget {
                         User? user = snapshot.data;
 
                         return carouselItem(
+                          context,
                           user!.img,
                           user.name,
                           feedback.rating,
-                          feedback.feedbackMsg ?? '',
+                          feedback.feedbackMsg ?? 'No data',
                           feedback.images,
                         );
                       },
@@ -345,7 +380,9 @@ class CustomWidget {
                   options: CarouselOptions(
                     viewportFraction: .9,
                     height: 500,
-                    autoPlay: true,
+                    autoPlay: (feedbackList.length > 1) ? true : false,
+                    enableInfiniteScroll:
+                        (feedbackList.length > 1) ? true : false,
                     enlargeCenterPage: true,
                   ),
                 )
@@ -409,6 +446,88 @@ class CustomWidget {
               child: const Text('Ok'),
             ),
           ],
+        ),
+      );
+
+  Widget rateAndReviewbottomModal(
+    Widget leading1,
+    String title1,
+    Function() onTap1,
+    Widget leading2,
+    String title2,
+    Function() onTap2,
+  ) =>
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: leading1,
+            title: Text(title1),
+            onTap: onTap1,
+          ),
+          ListTile(
+            leading: leading2,
+            title: Text(title2),
+            onTap: onTap2,
+          ),
+        ],
+      );
+
+  Widget showImageDialog(BuildContext context, File image) => Dialog(
+        backgroundColor: primaryColor,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.file(
+                  image,
+                  fit: BoxFit.contain,
+                ),
+                Positioned(
+                  top: 1.0,
+                  left: 1.0,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      color: backgroundColor,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+  Widget rateAndReviewAlertDialog(
+          String img, String content, List<Widget>? actions) =>
+      AlertDialog(
+        title: Image.asset(img),
+        content: Text(content),
+        actions: actions,
+      );
+
+  Widget alertDialogBtn(String label, Color backgroundColor_, Color borderColor,
+          Color txtColor_, Function() onPressed) =>
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            backgroundColor: backgroundColor_,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                color: borderColor,
+              ),
+            )),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: TextStyle(color: txtColor_),
         ),
       );
 
