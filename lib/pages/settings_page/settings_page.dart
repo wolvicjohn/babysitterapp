@@ -5,6 +5,7 @@ import 'package:babysitterapp/pages/location/user_view_location.dart';
 import 'package:babysitterapp/pages/payment/payment_page.dart';
 import 'package:babysitterapp/pages/requirement/requirement_page.dart';
 import 'package:babysitterapp/pages/search_page/search_page.dart';
+import 'package:babysitterapp/services/firestore_service.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,55 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // firestore service to get user data
+    final FirestoreService firestoreService = FirestoreService();
+
+    // future builder to display current user
+    var currentUser = FutureBuilder<Map<String, dynamic>?>(
+      future: firestoreService.getCurrentUserData(),
+      builder: (BuildContext context,
+          AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('No user data found.'));
+        } else {
+          // Extract user data from snapshot
+          String fullName = snapshot.data!['fullName'] ?? 'No Name';
+          String email = snapshot.data!['email'] ?? 'No Email';
+          String role = snapshot.data!['role'] ?? 'No Role';
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(fullName,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: backgroundColor,
+                    fontWeight: FontWeight.bold,
+                  )),
+              Text(
+                email,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white70,
+                ),
+              ),
+              Text(
+                role.toUpperCase(),
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: backgroundColor,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
+          );
+        }
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -58,33 +108,19 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Digong',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'digongduterte@gmail.com',
+                      // display current user name, email and role
+                      currentUser,
+                      const SizedBox(height: 4),
+                      const Text(
+                        'View Profile',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white70,
+                          color: Colors.orange,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      // Text(
-                      //   'New Update',
-                      //   style: TextStyle(
-                      //     fontSize: 14,
-                      //     color: Colors.orange,
-                      //   ),
-                      // ),
                     ],
                   ),
                 ],
