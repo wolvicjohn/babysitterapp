@@ -1,3 +1,4 @@
+import 'package:babysitterapp/authentication/forgot_password_page.dart';
 import 'package:babysitterapp/components/button.dart';
 import 'package:babysitterapp/pages/homepage/home_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
@@ -150,6 +151,10 @@ class _BabySitterLoginPageState extends State<BabySitterLoginPage> {
       child: TextButton(
         onPressed: () {
           // Forgot password logic
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+          );
         },
         child: const Text(
           'Forgot Password?',
