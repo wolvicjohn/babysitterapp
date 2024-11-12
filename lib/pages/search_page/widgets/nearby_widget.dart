@@ -81,13 +81,14 @@ class _NearbyWidgetState extends State<NearbyWidget> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            selectedBabysitter = babysitter; //update the selected babysitter
+                            selectedBabysitter =
+                                babysitter; //update the selected babysitter
                           });
                         },
                         child: _buildBabysitterCard(babysitter),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ],
@@ -138,11 +139,11 @@ class _NearbyWidgetState extends State<NearbyWidget> {
                   fit: BoxFit.cover,
                 ),
               ),
-
               const SizedBox(width: 16),
               Text(
                 babysitter.name,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -172,16 +173,14 @@ class _NearbyWidgetState extends State<NearbyWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                onPressed: () {
-                },
-                child: Text('Contact'),
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                child: const Text('Contact'),
               ),
               ElevatedButton(
-                onPressed: () {
-                },
-                child: Text('Book Now'),
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                child: const Text('Book Now'),
               ),
             ],
           ),
@@ -197,7 +196,9 @@ class _NearbyWidgetState extends State<NearbyWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 6, spreadRadius: 1)],
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 6, spreadRadius: 1)
+        ],
       ),
       width: 100,
       child: Column(
@@ -211,9 +212,7 @@ class _NearbyWidgetState extends State<NearbyWidget> {
               fit: BoxFit.cover,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
             babysitter.name,
             style: const TextStyle(
@@ -224,13 +223,10 @@ class _NearbyWidgetState extends State<NearbyWidget> {
             maxLines: 1,
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 4),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               const Icon(Icons.star, size: 10, color: primaryColor),
               const SizedBox(width: 2),
               Text(
