@@ -10,6 +10,7 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   String? _selectedPaymentMethod;
   final _formKey = GlobalKey<FormState>();
+  final _amountController = TextEditingController();
 
   // Function to show confirmation dialog
   Future<void> _showConfirmationDialog(VoidCallback onConfirm) async {
@@ -41,28 +42,37 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // Simulate Payment Functions
-  void _payWithGCash() {
-    _showConfirmationDialog(() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing payment with GCash...')),
-      );
-    });
+  // Navigate to Success Screen
+  void _navigateToSuccessScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SuccessScreen(),
+      ),
+    );
   }
 
-  void _payWithGPay() {
+  // Payment functions
+  void _payWithGCash() {
+    if (_amountController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter an amount for GPay')),
+      );
+      return;
+    }
+
     _showConfirmationDialog(() {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Processing payment with GPay...')),
       );
+      Future.delayed(const Duration(seconds: 2), () {
+        _navigateToSuccessScreen();
+      });
     });
   }
 
   void _payWithDirectPay() {
     _showConfirmationDialog(() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing payment with Direct Pay...')),
-      );
+      _navigateToSuccessScreen();
     });
   }
 
@@ -73,6 +83,9 @@ class _PaymentPageState extends State<PaymentPage> {
           const SnackBar(
               content: Text('Processing payment with Credit Card...')),
         );
+        Future.delayed(const Duration(seconds: 2), () {
+          _navigateToSuccessScreen();
+        });
       });
     }
   }
@@ -117,7 +130,6 @@ class _PaymentPageState extends State<PaymentPage> {
                         setState(() {
                           _selectedPaymentMethod = 'GPay';
                         });
-                        _payWithGPay();
                       },
                     ),
                     _buildPaymentOption(
@@ -134,6 +146,22 @@ class _PaymentPageState extends State<PaymentPage> {
                   ],
                 ),
                 const SizedBox(height: 20),
+
+                // GPay Amount Field
+                if (_selectedPaymentMethod == 'GPay')
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: TextFormField(
+                      controller: _amountController,
+                      decoration: InputDecoration(
+                        labelText: 'Enter Amount',
+                        prefixIcon: const Icon(Icons.attach_money),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
 
                 // Payment Form (only for Credit Card)
                 if (_selectedPaymentMethod == 'Credit Card')
@@ -172,6 +200,14 @@ class _PaymentPageState extends State<PaymentPage> {
                       ],
                     ),
                   ),
+
+                // Pay Button for GPay
+                if (_selectedPaymentMethod == 'GPay')
+                  ElevatedButton(
+                    onPressed: _payWithGCash,
+                    style: _elevatedButtonStyle(),
+                    child: const Text('Pay with GPay'),
+                  ),
               ],
             ),
           ),
@@ -180,7 +216,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // Build each payment option with an icon and label
   Widget _buildPaymentOption({
     required String label,
     required String iconPath,
@@ -214,7 +249,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
   ButtonStyle _elevatedButtonStyle() {
     return ElevatedButton.styleFrom(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.deepPurple,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
@@ -244,6 +279,49 @@ class _PaymentPageState extends State<PaymentPage> {
         }
         return null;
       },
+    );
+  }
+}
+
+// Success Screen
+class SuccessScreen extends StatelessWidget {
+  const SuccessScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Payment Success',
+            style: TextStyle(fontFamily: 'Poppins')),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.check_circle, color: Colors.deepPurple, size: 80),
+            SizedBox(height: 20),
+            Text(
+              'Congratulations!',
+              style: TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'You have successfully paid.',
+              style: TextStyle(fontSize: 18, fontFamily: 'Poppins'),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

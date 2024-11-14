@@ -1,4 +1,5 @@
 import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/utils/authentication.dart';
@@ -16,10 +17,13 @@ class BabySitterRegisterPage extends StatefulWidget {
 
 class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  // call database
+  FirestoreService firestoreService = FirestoreService();
 
   // Form fields
   String? _email;
   String? _password;
+  String? fullName;
   String? _confirmPassword;
   String? _phoneNumber;
   String? _selectedRole;
@@ -56,12 +60,13 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
 
   Future<void> _createFirebaseUser() async {
     _showLoadingDialog();
-
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _email!,
-        password: _password!,
-      );
+      await firestoreService.registerUser(
+          email: _email!,
+          password: _password!,
+          name: fullName!,
+          role: _selectedRole!,
+          phone: _phoneNumber!);
       _onRegistrationSuccess();
     } on FirebaseAuthException catch (e) {
       _handleAuthError(e);
@@ -71,15 +76,21 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   void _showLoadingDialog() {
     showDialog(
       context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Dialog(
+          backgroundColor: Colors.transparent,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
     );
   }
 
   void _onRegistrationSuccess() {
     Navigator.pop(context); // Dismiss loading dialog
-    Navigator.pushReplacementNamed(context, '/welcome');
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   void _handleAuthError(FirebaseAuthException e) {
@@ -165,7 +176,8 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   }
 
   Widget _buildNameField() {
-    return TextField(
+    return TextFormField(
+      onSaved: (value) => fullName = value,
       decoration: _defaultInputDecoration.copyWith(
         hintText: "Full Name",
       ),
@@ -235,7 +247,7 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
       ),
       value: _selectedRole,
       items: const [
-        DropdownMenuItem(value: 'employer', child: Text('Employer')),
+        DropdownMenuItem(value: 'parent', child: Text('Parent')),
         DropdownMenuItem(value: 'babysitter', child: Text('Babysitter')),
       ],
       onChanged: (value) => setState(() => _selectedRole = value),
