@@ -9,11 +9,13 @@ import 'time_selector.dart';
 class BookingRequestPage extends StatefulWidget {
   final String babysitterImage;
   final String babysitterName;
+  final double babysitterRate;
 
   const BookingRequestPage({
     super.key,
     required this.babysitterImage,
     required this.babysitterName,
+    required this.babysitterRate,
   });
 
   @override
@@ -33,28 +35,30 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     'Sunday': false,
   };
 
-  // New field for selected time
-  String? _selectedTime = 'Morning'; // Default time
+  String? _paymentMode = 'GCash';
 
-  String? _paymentTiming = 'Before Service'; // Default to 'Before Service'
-  String? _paymentMode = 'GCash'; // Default payment mode
+  late double hourlyRate;
+  double _durationHours = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    hourlyRate = widget.babysitterRate.toDouble();
+  }
 
   void _submitBooking() {
-    String selectedDaysString = _selectedDays.entries
-        .where((entry) => entry.value)
-        .map((entry) => entry.key)
-        .join(', ');
-
     Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
             ConfirmationPage(
+          babysitterImage: widget.babysitterImage,
           babysitterName: widget.babysitterName,
           specialRequirements: _specialRequirementsController.text,
-          selectedTime: _selectedTime ?? 'Morning',
-          paymentTiming: _paymentTiming ?? 'Before Service',
+          duration: _durationHours.toString(),
           paymentMode: _paymentMode ?? 'GCash',
+          totalpayment: (hourlyRate * _durationHours).toStringAsFixed(2),
+          babysitterRate: widget.babysitterRate,
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(0.0, 1.0);
@@ -74,10 +78,9 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
     );
   }
 
-  // Callback to handle selected time
-  void _onTimeSelected(String selectedTime) {
+  void _onDurationChanged(double duration) {
     setState(() {
-      _selectedTime = selectedTime;
+      _durationHours = duration; // Update the selected duration in hours
     });
   }
 
@@ -108,7 +111,6 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
               ],
             ),
             const SizedBox(height: 20),
-            // Babysitter details container
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               padding: const EdgeInsets.all(16.0),
@@ -125,6 +127,7 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                 ],
               ),
               child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Babysitter Details',
@@ -169,7 +172,6 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
               ),
             ),
             const SizedBox(height: 20),
-            // Availability and other selections
             Container(
               margin: const EdgeInsetsDirectional.symmetric(horizontal: 10),
               padding: const EdgeInsets.all(16.0),
@@ -189,56 +191,9 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                 children: [
                   AvailabilitySelector(selectedDays: _selectedDays),
                   const SizedBox(height: 16),
-                  TimeSelector(onTimeSelected: _onTimeSelected),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Choose Payment Timing',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Before Service',
-                              groupValue: _paymentTiming,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentTiming = value;
-                                });
-                              },
-                            ),
-                            const Text('Before'),
-                            Radio<String>(
-                              value: 'After Service',
-                              groupValue: _paymentTiming,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _paymentTiming = value;
-                                });
-                              },
-                            ),
-                            const Text('After'),
-                          ],
-                        ),
-                      ],
-                    ),
+                  TimeSelector(
+                    onDurationChanged:
+                        _onDurationChanged, // Pass duration change callback
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -276,7 +231,7 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                             ),
                             const Text('GCash'),
                             Radio<String>(
-                              value: 'Card',
+                              value: 'GPay',
                               groupValue: _paymentMode,
                               onChanged: (String? value) {
                                 setState(() {
@@ -284,7 +239,7 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                                 });
                               },
                             ),
-                            const Text('Card'),
+                            const Text('GPay'),
                           ],
                         ),
                       ],
@@ -296,9 +251,22 @@ class _BookingRequestPageState extends State<BookingRequestPage> {
                     hintText: 'Enter any special requirements',
                     suffix: null,
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Offer: PHP ${widget.babysitterRate.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    'Total Amount: PHP ${(hourlyRate * _durationHours).toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   AppButton(
-                    text: 'Submit Request',
+                    text: 'Submit',
                     onPressed: _submitBooking,
                   ),
                 ],

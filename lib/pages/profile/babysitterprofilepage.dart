@@ -120,6 +120,7 @@ class _BabysitterProfilePageState extends State<BabysitterProfilePage> {
                           builder: (context) => BookingRequestPage(
                                 babysitterImage: babysitter!.img,
                                 babysitterName: babysitter!.name,
+                                babysitterRate: babysitter!.rate.toDouble(),
                               )),
                     );
                   },
