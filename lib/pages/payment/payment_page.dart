@@ -205,8 +205,8 @@ class _PaymentPageState extends State<PaymentPage> {
                 if (_selectedPaymentMethod == 'GPay')
                   ElevatedButton(
                     onPressed: _payWithGCash,
-                    child: const Text('Pay with GPay'),
                     style: _elevatedButtonStyle(),
+                    child: const Text('Pay with GPay'),
                   ),
               ],
             ),
@@ -300,10 +300,10 @@ class SuccessScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(Icons.check_circle, color: Colors.deepPurple, size: 80),
             SizedBox(height: 20),
             Text(

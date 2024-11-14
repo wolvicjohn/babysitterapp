@@ -1,5 +1,7 @@
 import 'package:babysitterapp/authentication/landing_page.dart';
+import 'package:babysitterapp/authentication/register_page.dart';
 import 'package:babysitterapp/pages/homepage/home_page.dart';
+import 'package:babysitterapp/pages/settings_page/settings_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

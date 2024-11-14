@@ -1,3 +1,4 @@
+import 'package:babysitterapp/components/bottom_navigation_bar.dart';
 import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/babysitter_card.dart';
 import 'package:babysitterapp/pages/homepage/notification_page.dart';
@@ -9,6 +10,9 @@ import 'package:babysitterapp/styles/responsive.dart';
 import 'package:babysitterapp/styles/size.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/user_model.dart';
+import '../../services/firestore_service.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -17,10 +21,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  final int _unreadNotifications = 4;
+  // call firestore service
+  FirestoreService firestoreService = FirestoreService();
+  // get data from firestore using the model
+  UserModel? currentUser;
 
-  final String userName = 'John Doe';
+  // load user data
+  Future<void> _loadUserData() async {
+    final user = await firestoreService.loadUserData();
+    setState(() {
+      currentUser = user;
+    });
+  }
+
+  // initiate load
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  final int _unreadNotifications = 4;
 
   double _minRating = 0.0;
   double _minRate = 0.0;
@@ -110,22 +131,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const BabysitterViewLocation(),
-        ),
-      );
-    }
-  }
-
-  @override
   Widget _buildBabysitterSection(BuildContext context, String title,
       List<Map<String, dynamic>> babysitters) {
     final double screenHeight = sizeConfig.heightSize(context);
@@ -199,95 +204,76 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
-    final double screenWidth = sizeConfig.widthSize(context);
     final double screenHeight = sizeConfig.heightSize(context);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Hello, $userName',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
-            fontSize: Responsive.getTextFontSize(context) * 1.5,
-          ),
-        ),
-        actions: [
-          Stack(
-            clipBehavior: Clip.hardEdge,
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications,
-                    color: Theme.of(context).colorScheme.secondary),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationPage(),
-                    ),
-                  );
-                },
-              ),
-              if (_unreadNotifications > 0)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.red,
-                    child: Text(
-                      '$_unreadNotifications',
-                      style: TextStyle(
-                        fontSize: Responsive.getTextFontSize(context),
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+    return currentUser == null
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(
+                'Hello, ${currentUser!.name}',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: Responsive.getTextFontSize(context) * 1.5,
                 ),
-            ],
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: Responsive.getResponsivePadding(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: screenHeight * 0.01),
-            _buildBabysitterSection(
-                context, 'Top Rated Babysitters', filteredBabysitters),
-            _buildTransactionSection(
-                context, 'Total Transaction', transactions),
-            _buildAnalyticsSection(context),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.black,
-        selectedItemColor: Theme.of(context).colorScheme.tertiary,
-        unselectedItemColor: Colors.grey,
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: IconButton(
-                icon: const Icon(Icons.message),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const ChatPage()),
-                  );
-                },
               ),
-              label: 'Messages'),
-          const BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-    );
+              actions: [
+                Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    IconButton(
+                      icon:
+                          const Icon(Icons.notifications, color: tertiaryColor),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NotificationPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    if (_unreadNotifications > 0)
+                      Positioned(
+                        right: 5,
+                        top: 5,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            '$_unreadNotifications',
+                            style: TextStyle(
+                              fontSize: Responsive.getTextFontSize(context),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
+              padding: Responsive.getResponsivePadding(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: screenHeight * 0.01),
+                  _buildBabysitterSection(
+                      context, 'Top Rated Babysitters', filteredBabysitters),
+                  _buildTransactionSection(
+                      context, 'Total Transaction', transactions),
+                  _buildAnalyticsSection(context),
+                ],
+              ),
+            ),
+            bottomNavigationBar: const BottomNavBar());
   }
 
   Widget _buildAnalyticsSection(BuildContext context) {

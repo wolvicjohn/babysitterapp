@@ -61,8 +61,12 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   Future<void> _createFirebaseUser() async {
     _showLoadingDialog();
     try {
-      await firestoreService.addUser(
-          _email, _password, fullName, _selectedRole, _phoneNumber);
+      await firestoreService.registerUser(
+          email: _email!,
+          password: _password!,
+          name: fullName!,
+          role: _selectedRole!,
+          phone: _phoneNumber!);
       _onRegistrationSuccess();
     } on FirebaseAuthException catch (e) {
       _handleAuthError(e);
