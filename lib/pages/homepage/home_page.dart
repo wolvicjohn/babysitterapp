@@ -3,7 +3,8 @@ import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/babysitter_card.dart';
 import 'package:babysitterapp/pages/homepage/notification_page.dart';
 import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
-import 'package:babysitterapp/pages/profile/profilepage.dart';
+import 'package:babysitterapp/pages/profile/babysitterprofilepage.dart';
+import 'package:babysitterapp/pages/settings_page/settings_page.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/responsive.dart';
@@ -42,6 +43,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   final int _unreadNotifications = 4;
+  late Widget? selectedBody;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedBody = null;
+  }
 
   double _minRating = 0.0;
   double _minRate = 0.0;
@@ -130,6 +138,29 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+
+      switch (index) {
+        case 0:
+          selectedBody = null;
+          break;
+        case 1:
+          selectedBody = const ChatPage();
+          break;
+        case 2:
+          selectedBody = const BabysitterViewLocation();
+          break;
+        case 3:
+          selectedBody = const SettingsPage();
+          break;
+        default:
+          selectedBody = null;
+      }
+    });
+  }
 
   Widget _buildBabysitterSection(BuildContext context, String title,
       List<Map<String, dynamic>> babysitters) {

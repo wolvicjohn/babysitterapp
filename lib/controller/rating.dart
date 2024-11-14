@@ -1,13 +1,19 @@
 //NOTE: This is temporary rating data fields
 
 class Rating {
-  final String id;
+  final String userID;
+  final String babysitterID;
   final int rating;
   final String review;
+  List? images;
+  final DateTime timestamp;
 
   Rating({
-    required this.id,
+    required this.userID,
+    required this.babysitterID,
     required this.rating,
     required this.review,
+    required this.timestamp,
+    this.images,
   });
 }

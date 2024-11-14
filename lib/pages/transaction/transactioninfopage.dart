@@ -1,5 +1,5 @@
 import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/pages/rate/ratepage.dart';
+import 'package:babysitterapp/pages/rate/rateandreviewpage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../styles/colors.dart';
@@ -93,7 +93,8 @@ class TransactionInfoPage extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => const RatePage()),
+                                  builder: (context) => const RateAndReviewPage(
+                                      babysitterID: 'samplebabysitter01')),
                             );
                           },
                         )),
