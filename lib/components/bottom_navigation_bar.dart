@@ -1,3 +1,6 @@
+import 'package:babysitterapp/pages/chat/chatpage.dart';
+import 'package:babysitterapp/pages/homepage/home_page.dart';
+import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
 import 'package:babysitterapp/pages/settings_page/settings_page.dart';
 import 'package:babysitterapp/styles/route_animation.dart';
 import 'package:flutter/material.dart';
@@ -34,13 +37,25 @@ class _BottomNavBarState extends State<BottomNavBar> {
       _selectedIndex = index;
     });
 
-    if (index == 3) {
-      await Navigator.push(
-          context, RouteAnimate(1.0, 0, page: const SettingsPage()));
-
-      setState(() {
-        _selectedIndex = 0;
-      });
+    switch (index) {
+      case 1:
+        await Navigator.push(
+            context, RouteAnimate(0.0, 1.0, page: const ChatPage()));
+        break;
+      case 2:
+        await Navigator.push(context,
+            RouteAnimate(0, 1.0, page: const BabysitterViewLocation()));
+        break;
+      case 3:
+        await Navigator.push(
+            context, RouteAnimate(1.0, 0, page: const SettingsPage()));
+        break;
+      default:
+        const HomePage();
     }
+
+    setState(() {
+      _selectedIndex = 0;
+    });
   }
 }

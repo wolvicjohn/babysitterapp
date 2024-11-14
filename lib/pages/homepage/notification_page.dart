@@ -10,8 +10,7 @@ class NotificationPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title:
-            Text('Notification', style: Theme.of(context).textTheme.bodyLarge),
+        title: const Text('Notification'),
       ),
       body: ListView(
         children: [
@@ -72,22 +71,22 @@ class NotificationPage extends StatelessWidget {
                             ),
                           );
                         },
-                        child: const Text('Accept'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.green,
                         ),
+                        child: const Text('Accept'),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
                           print('Connection declined');
                         },
-                        child: const Text('Decline'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.red,
                         ),
+                        child: const Text('Decline'),
                       ),
                     ],
                   ),

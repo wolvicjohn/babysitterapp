@@ -1,7 +1,6 @@
 import 'package:babysitterapp/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class FirestoreService {
   // initiate firebase authentication
@@ -71,6 +70,16 @@ class FirestoreService {
     } catch (e) {
       print('Error saving user data: $e');
       rethrow;
+    }
+  }
+
+  // log out user
+  Future<void> signOutUser() async {
+    try {
+      await firebaseAuth.signOut();
+      print("User signed out successfully.");
+    } catch (e) {
+      print("Error signing out: $e");
     }
   }
 }

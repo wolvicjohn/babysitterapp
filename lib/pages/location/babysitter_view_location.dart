@@ -37,9 +37,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
   Widget build(BuildContext context) {
     // appBar design
     const double appBarTitleSize = 18.0;
-    const double appBarBorderRadius = 20.0;
     const double leadingButtonPadding = 10.0;
-    const double horizontalPadding = 3.0;
 
     var appBarTitle = const Text("Client Destination",
         style: TextStyle(
@@ -51,24 +49,6 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       title: appBarTitle,
-      flexibleSpace: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
-        child: Container(
-          margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(appBarBorderRadius),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 6.0,
-                spreadRadius: 1.0,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-        ),
-      ),
       leading: Padding(
         padding: const EdgeInsets.only(left: leadingButtonPadding),
         child: Container(
@@ -92,46 +72,66 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
       appBar: appBar,
       body: SizedBox(
         height: sizeConfig.heightSize(context),
-        child: Stack(
-          children: [
-            FlutterMap(
-              options: MapOptions(
-                  initialCenter: start, initialZoom: 14, minZoom: 14),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
-                  subdomains: const ['a', 'b', 'c'],
-                ),
-                // markers(start and end)
-                _directionsMarker(),
-                // polyline for directions
-                if (routePoints.isNotEmpty) _drawPolyline()
-              ],
-            ),
-            // info container
-            _info()
-          ],
-        ),
+        child: routePoints.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Stack(
+                children: [
+                  FlutterMap(
+                    options: MapOptions(
+                        initialCenter: end, initialZoom: 14, minZoom: 14),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.app',
+                        subdomains: const ['a', 'b', 'c'],
+                      ),
+                      // markers(start and end)
+                      _directionsMarker(),
+                      // polyline for directions
+                      _drawPolyline()
+                    ],
+                  ),
+                  // info container
+                  _info()
+                ],
+              ),
       ),
+    );
+  }
+
+  Widget _positionMarker({required IconData icon, double widthHeight = 35}) {
+    return Stack(
+      children: [
+        Positioned(
+            bottom: 35,
+            left: 0,
+            right: 0,
+            child: Icon(
+              icon,
+              size: widthHeight,
+            )),
+      ],
     );
   }
 
   // markers for directions
   Widget _directionsMarker() {
+    const double widthHeight = 70;
     return MarkerLayer(
       markers: [
         Marker(
-          point: start,
-          width: 100,
-          height: 100,
-          child: Image.asset('assets/images/location.png'),
-        ),
+            point: start,
+            width: widthHeight,
+            height: widthHeight,
+            child: _positionMarker(icon: Icons.person)),
         Marker(
           point: end,
-          width: 100,
-          height: 100,
-          child: Image.asset('assets/images/location.png'),
+          width: widthHeight,
+          height: widthHeight,
+          child: _positionMarker(icon: Icons.home),
         ),
       ],
     );

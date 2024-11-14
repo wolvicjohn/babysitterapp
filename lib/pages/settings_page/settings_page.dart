@@ -159,10 +159,47 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ],
                   ),
-                  const SettingsSection(
-                    title: 'NOTIFICATIONS',
+                  SettingsSection(
+                    title: 'Login',
                     items: [
-                      SettingsSwitchItem(label: 'Notifications'),
+                      // log out user
+                      SettingsItem(
+                        label: 'Log Out',
+                        icon: Icons.logout,
+                        onTap: () async {
+                          bool? confirmLogout = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Log Out"),
+                                content: const Text(
+                                    "Are you sure you want to log out?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          false); // User canceled the logout
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          true); // User confirmed the logout
+                                    },
+                                    child: const Text("Log Out"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmLogout == true) {
+                            await firestoreService.signOutUser();
+                            Navigator.of(context).pushNamed("/login");
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ],
