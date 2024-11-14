@@ -2,6 +2,7 @@ import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/home_page.dart';
 import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
 import 'package:babysitterapp/pages/settings_page/settings_page.dart';
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/route_animation.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       currentIndex: _selectedIndex,
       onTap: _onItemTapped,
       backgroundColor: Colors.black,
-      selectedItemColor: Theme.of(context).colorScheme.tertiary,
+      selectedItemColor: primaryColor,
       unselectedItemColor: Colors.grey,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
