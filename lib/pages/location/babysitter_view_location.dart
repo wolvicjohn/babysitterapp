@@ -1,10 +1,12 @@
 import 'package:babysitterapp/controller/userdata.dart';
+import 'package:babysitterapp/services/firestore.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../controller/user.dart';
 import '../../services/location_service.dart';
 
 class BabysitterViewLocation extends StatefulWidget {
@@ -17,6 +19,10 @@ class BabysitterViewLocation extends StatefulWidget {
 class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
   LocationService locationService = LocationService();
   UserData clientData = UserData();
+  FirestoreService firestoreService = FirestoreService();
+
+  // babysitter profile
+  late User? babysitter;
 
   // directions
   final List<LatLng> routePoints = [];
@@ -26,7 +32,16 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
   @override
   void initState() {
     super.initState();
+    babysitter = null;
     loadRoute();
+    fetchUserData();
+  }
+
+  //fetch babysitter data based on babysitterID
+  Future<void> fetchUserData() async {
+    babysitter = await firestoreService.getUserData("samplebabysitter01");
+
+    setState(() {});
   }
 
   // text style widget
@@ -36,19 +51,19 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
   @override
   Widget build(BuildContext context) {
     // appBar design
-    const double appBarTitleSize = 18.0;
+    // const double appBarTitleSize = 18.0;
     const double leadingButtonPadding = 10.0;
 
-    var appBarTitle = const Text("Client Destination",
-        style: TextStyle(
-            color: textColor,
-            fontSize: appBarTitleSize,
-            fontWeight: FontWeight.w500));
+    // var appBarTitle = const Text("Client Destination",
+    //     style: TextStyle(
+    //         color: textColor,
+    //         fontSize: appBarTitleSize,
+    //         fontWeight: FontWeight.w500));
 
     var appBar = AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      title: appBarTitle,
+      // title: appBarTitle,
       leading: Padding(
         padding: const EdgeInsets.only(left: leadingButtonPadding),
         child: Container(
@@ -72,7 +87,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
       appBar: appBar,
       body: SizedBox(
         height: sizeConfig.heightSize(context),
-        child: routePoints.isEmpty
+        child: routePoints.isEmpty || babysitter == null
             ? const Center(
                 child: CircularProgressIndicator(),
               )
@@ -88,10 +103,10 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                         userAgentPackageName: 'com.example.app',
                         subdomains: const ['a', 'b', 'c'],
                       ),
+                      // polyline for directions
+                      _drawPolyline(),
                       // markers(start and end)
                       _directionsMarker(),
-                      // polyline for directions
-                      _drawPolyline()
                     ],
                   ),
                   // info container
@@ -99,21 +114,6 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                 ],
               ),
       ),
-    );
-  }
-
-  Widget _positionMarker({required IconData icon, double widthHeight = 35}) {
-    return Stack(
-      children: [
-        Positioned(
-            bottom: 35,
-            left: 0,
-            right: 0,
-            child: Icon(
-              icon,
-              size: widthHeight,
-            )),
-      ],
     );
   }
 
@@ -126,13 +126,16 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
             point: start,
             width: widthHeight,
             height: widthHeight,
-            child: _positionMarker(icon: Icons.person)),
+            child: const Icon(
+              Icons.circle,
+            )),
         Marker(
-          point: end,
-          width: widthHeight,
-          height: widthHeight,
-          child: _positionMarker(icon: Icons.home),
-        ),
+            point: end,
+            width: widthHeight,
+            height: widthHeight,
+            child: const Icon(
+              Icons.circle,
+            )),
       ],
     );
   }
@@ -144,7 +147,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
         Polyline(
           points: routePoints,
           strokeWidth: 4.0,
-          color: Colors.purple,
+          color: primaryColor,
         ),
       ],
     );
@@ -153,7 +156,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
   // info container
   Widget _info() {
     return Positioned(
-      bottom: 25,
+      bottom: 20,
       left: 0,
       right: 0,
       child: Column(
@@ -183,8 +186,7 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                     const CircleAvatar(
                       backgroundColor: Colors.transparent,
                       radius: 40,
-                      backgroundImage: NetworkImage(
-                          "https://franchisematch.com/wp-content/uploads/2015/02/john-doe.jpg"),
+                      backgroundImage: AssetImage('assets/images/female1.jpg'),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -192,17 +194,22 @@ class _BabysitterViewLocationState extends State<BabysitterViewLocation> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Client Information:",
+                            "Babysitter Information:",
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 12),
                           ),
                           Text(
-                            clientData.currentUser.name,
+                            babysitter!.name,
                             style: textStyle,
                             overflow: textOverflow,
                           ),
                           Text(
-                            clientData.currentUser.email,
+                            babysitter!.email,
+                            overflow: textOverflow,
+                            style: textStyle,
+                          ),
+                          Text(
+                            babysitter!.address,
                             overflow: textOverflow,
                             style: textStyle,
                           ),

@@ -18,16 +18,12 @@ class AppTextField extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
         hintText: hintText,
         suffixIcon: suffix);
-    var padding = const EdgeInsets.symmetric(horizontal: 10);
 
-    return Padding(
-      padding: padding,
-      child: SizedBox(
-        width: sizeConfig.widthSize(context),
-        child: TextField(
-          controller: controller,
-          decoration: decoration,
-        ),
+    return SizedBox(
+      width: sizeConfig.widthSize(context),
+      child: TextField(
+        controller: controller,
+        decoration: decoration,
       ),
     );
   }

@@ -11,10 +11,10 @@ class BookingService {
         ? _firestore
             .collection('bookings')
             .where('userEmail', isEqualTo: _auth.currentUser!.email)
-            .orderBy('createdAt', descending: true) // Optional: order by creation date
+            .orderBy('createdAt',
+                descending: true) // Optional: order by creation date
             .snapshots()
-            .map((snapshot) =>
-                snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList())
+            .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList())
         : Stream.value([]); // If no user is logged in, return an empty list
   }
 
@@ -45,7 +45,8 @@ class BookingService {
         'totalpayment': totalpayment,
         'babysitterRate': babysitterRate,
         'status': 'confirmed', // Assuming status is 'confirmed' when saved
-        'createdAt': FieldValue.serverTimestamp(), // Timestamp of when the booking was created
+        'createdAt': FieldValue
+            .serverTimestamp(), // Timestamp of when the booking was created
         'userEmail': userEmail, // Store the user's email with the booking
       });
 

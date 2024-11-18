@@ -38,21 +38,29 @@ class TransactionHistoryPage extends StatelessWidget {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              final booking = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              final booking =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
               final String status = booking['status'];
               final String babysitterName = booking['babysitterName'];
-              final String transactionId = snapshot.data!.docs[index].id; // Get the document ID
-              final DateTime createdAt = (booking['createdAt'] as Timestamp).toDate();
+              final String transactionId =
+                  snapshot.data!.docs[index].id; // Get the document ID
+              final DateTime createdAt =
+                  (booking['createdAt'] as Timestamp).toDate();
 
               return GestureDetector(
-                onTap: () => _navigateToBabysitterDetails(context, transactionId, babysitterName, createdAt),
+                onTap: () => _navigateToBabysitterDetails(
+                    context, transactionId, babysitterName, createdAt),
                 child: Card(
-                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   child: ListTile(
                     leading: statusIcon(status),
                     title: Text(
                       'Babysitter: $babysitterName',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                       'Date: ${DateFormat('yyyy-MM-dd').format(createdAt)}\nStatus: $status',
@@ -68,12 +76,13 @@ class TransactionHistoryPage extends StatelessWidget {
     );
   }
 
-  void _navigateToBabysitterDetails(BuildContext context, String transactionId, String babysitterName, DateTime createdAt) {
+  void _navigateToBabysitterDetails(BuildContext context, String transactionId,
+      String babysitterName, DateTime createdAt) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TransactionInfoPage(
-          transactionId: transactionId, 
+          transactionId: transactionId,
           babysitterName: babysitterName,
           bookingDate: createdAt,
         ),

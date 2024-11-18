@@ -37,6 +37,7 @@ class _AccountPageState extends State<AccountPage> {
     final user = await firestoreService.loadUserData();
     setState(() {
       currentUser = user;
+      selectedGender = currentUser?.gender;
     });
   }
 
@@ -45,6 +46,7 @@ class _AccountPageState extends State<AccountPage> {
   void initState() {
     super.initState();
     _loadUserData();
+    selectedGender = currentUser?.gender;
   }
 
   // save new data when save is clicked

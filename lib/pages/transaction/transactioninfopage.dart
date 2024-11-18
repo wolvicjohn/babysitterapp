@@ -33,7 +33,7 @@ class TransactionInfoPage extends StatelessWidget {
           child: FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance
                 .collection('bookings')
-                .doc(transactionId)  // Use the Firestore document ID here
+                .doc(transactionId) // Use the Firestore document ID here
                 .get(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,20 +48,24 @@ class TransactionInfoPage extends StatelessWidget {
                 return const Center(child: Text('No transaction found.'));
               }
 
-              var transactionData = snapshot.data!.data() as Map<String, dynamic>;
+              var transactionData =
+                  snapshot.data!.data() as Map<String, dynamic>;
 
-              String specialRequirements = transactionData['specialRequirements'] ?? 'N/A';
+              String specialRequirements =
+                  transactionData['specialRequirements'] ?? 'N/A';
               String duration = transactionData['duration'] ?? 'N/A';
               String paymentMode = transactionData['paymentMode'] ?? 'N/A';
               String totalPayment = transactionData['totalpayment'] ?? 'N/A';
-              double babysitterRate = transactionData['babysitterOffer']?.toDouble() ?? 0.0;
+              double babysitterRate =
+                  transactionData['babysitterOffer']?.toDouble() ?? 0.0;
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20.0),
-                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15.0),
@@ -76,7 +80,8 @@ class TransactionInfoPage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.check_circle, color: accentColor, size: 60),
+                      const Icon(Icons.check_circle,
+                          color: accentColor, size: 60),
                       const SizedBox(height: 10),
                       Text(
                         'Transaction Successful',
@@ -88,11 +93,16 @@ class TransactionInfoPage extends StatelessWidget {
                       const SizedBox(height: 20),
                       _detailRow('Babysitter:', babysitterName, context),
                       const SizedBox(height: 10),
-                      _detailRow('Booking Date:', DateFormat('yyyy-MM-dd').format(bookingDate), context),
+                      _detailRow(
+                          'Booking Date:',
+                          DateFormat('yyyy-MM-dd').format(bookingDate),
+                          context),
                       const SizedBox(height: 10),
-                      _detailRow('Special Requirements:', specialRequirements, context),
+                      _detailRow('Special Requirements:', specialRequirements,
+                          context),
                       const SizedBox(height: 10),
-                      _detailRow('Duration:', _cleanDuration(duration), context),
+                      _detailRow(
+                          'Duration:', _cleanDuration(duration), context),
                       const SizedBox(height: 10),
                       _detailRow('Payment Mode:', paymentMode, context),
                       const SizedBox(height: 10),
@@ -118,7 +128,9 @@ class TransactionInfoPage extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => const RateAndReviewPage(babysitterID: '',),
+                                builder: (context) => const RateAndReviewPage(
+                                  babysitterID: 'samplebabysitter01',
+                                ),
                               ),
                             );
                           },
@@ -152,7 +164,10 @@ class TransactionInfoPage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .bodyLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(value),
       ],

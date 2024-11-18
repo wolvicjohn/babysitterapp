@@ -24,7 +24,7 @@ class _SearchPageState extends State<SearchPage> {
   bool _noResultsFound = false;
   bool _showFilterBar = true;
 
-  final LatLng userLocation = LatLng(37.7749, -122.4194);
+  final LatLng userLocation = const LatLng(37.7749, -122.4194);
 
   List<SearchResult> _applyFilter(List<SearchResult> results) {
     switch (_selectedFilter) {
@@ -45,8 +45,7 @@ class _SearchPageState extends State<SearchPage> {
 
       //update the filter widget based on the selected filter
       if (_selectedFilter == 'People') {
-        _filterWidget = const AllDefaultWidget(
-        );
+        _filterWidget = const AllDefaultWidget();
       } else if (_selectedFilter == 'Near you') {
         _filterWidget = NearbyWidget(
           userLocation: userLocation,
@@ -65,7 +64,6 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-
   void _onSearchSubmit(String value) {
     setState(() {
       if (value.isNotEmpty) {
@@ -76,10 +74,10 @@ class _SearchPageState extends State<SearchPage> {
 
         _searchResults = _allBabysitters
             .where((result) =>
-        result.location.toLowerCase().contains(value.toLowerCase()) ||
-            result.bio.toLowerCase().contains(value.toLowerCase()) ||
-            result.skills.any((skill) =>
-                skill.toLowerCase().contains(value.toLowerCase())))
+                result.location.toLowerCase().contains(value.toLowerCase()) ||
+                result.bio.toLowerCase().contains(value.toLowerCase()) ||
+                result.skills.any((skill) =>
+                    skill.toLowerCase().contains(value.toLowerCase())))
             .toList();
 
         _showResults = true;
@@ -97,7 +95,7 @@ class _SearchPageState extends State<SearchPage> {
 
         _searchResults = _allBabysitters
             .where((result) =>
-            result.location.toLowerCase().contains(value.toLowerCase()))
+                result.location.toLowerCase().contains(value.toLowerCase()))
             .toList();
       } else {
         _showAutocomplete = false;
@@ -184,28 +182,29 @@ class _SearchPageState extends State<SearchPage> {
             child: _selectedFilter == 'People'
                 ? _filterWidget
                 : _selectedFilter == 'Near you'
-                ? _filterWidget
-                : _selectedFilter == 'Map'
-                ? _filterWidget
-                : _showResults
-                ? SearchResultsWidget(
-              searchResults: _searchResults,
-              onLabelClick: _onLabelClick,
-              noResultsFound: _noResultsFound,
-              type: 'People',
-            )
-                : _showAutocomplete
-                ? AutocompleteWidget(
-              searchResults: _searchResults,
-              onLabelClick: _onLabelClick,
-            )
-                : _searchHistory.isEmpty
-                ? const Center(child: Text('No search yet.'))
-                : DefaultListWidget(
-              searchHistory: _searchHistory,
-              onHistoryItemClick: _onHistoryItemClick,
-              onClearHistory: _clearSearchHistory,
-            ),
+                    ? _filterWidget
+                    : _selectedFilter == 'Map'
+                        ? _filterWidget
+                        : _showResults
+                            ? SearchResultsWidget(
+                                searchResults: _searchResults,
+                                onLabelClick: _onLabelClick,
+                                noResultsFound: _noResultsFound,
+                                type: 'People',
+                              )
+                            : _showAutocomplete
+                                ? AutocompleteWidget(
+                                    searchResults: _searchResults,
+                                    onLabelClick: _onLabelClick,
+                                  )
+                                : _searchHistory.isEmpty
+                                    ? const Center(
+                                        child: Text('No search yet.'))
+                                    : DefaultListWidget(
+                                        searchHistory: _searchHistory,
+                                        onHistoryItemClick: _onHistoryItemClick,
+                                        onClearHistory: _clearSearchHistory,
+                                      ),
           ),
         ],
       ),

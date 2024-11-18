@@ -52,7 +52,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 50),
+        const SizedBox(height: 40),
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 20,

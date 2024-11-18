@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             height: 70,
                             decoration: const BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/profile/digong.jpg'),
+                                image: AssetImage('assets/images/home-bg.jpg'),
                                 fit: BoxFit.cover,
                               ),
                             ),

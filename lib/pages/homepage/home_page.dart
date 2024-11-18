@@ -1,9 +1,11 @@
 import 'package:babysitterapp/components/bottom_navigation_bar.dart';
+import 'package:babysitterapp/components/search_button.dart';
 import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/babysitter_card.dart';
 import 'package:babysitterapp/pages/homepage/notification_page.dart';
 import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
 import 'package:babysitterapp/pages/profile/babysitterprofilepage.dart';
+import 'package:babysitterapp/pages/search_page/widgets/index.dart';
 import 'package:babysitterapp/pages/settings_page/settings_page.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
@@ -55,22 +57,6 @@ class _HomePageState extends State<HomePage> {
       'profileImage': 'assets/images/female1.jpg',
       'liked': false,
     },
-    {
-      'name': 'Ken Takakura',
-      'rate': 200.0,
-      'rating': 4.7,
-      'reviews': 140,
-      'profileImage': 'assets/images/male3.jpg',
-      'liked': false,
-    },
-    {
-      'name': 'Granny',
-      'rate': 200.0,
-      'rating': 4.9,
-      'reviews': 404,
-      'profileImage': 'assets/images/female2.jpg',
-      'liked': false,
-    },
   ];
 
   void _toggleLike(int index) {
@@ -85,16 +71,6 @@ class _HomePageState extends State<HomePage> {
       'amount': 500.0,
       'babysitterName': 'Emma Gil',
     },
-    {
-      'date': '2024-11-09',
-      'amount': 450.0,
-      'babysitterName': 'Ken Takakura',
-    },
-    {
-      'date': '2024-11-08',
-      'amount': 300.0,
-      'babysitterName': 'Granny',
-    },
   ];
 
   List<Map<String, dynamic>> get filteredBabysitters {
@@ -108,72 +84,82 @@ class _HomePageState extends State<HomePage> {
       List<Map<String, dynamic>> babysitters) {
     final double screenHeight = sizeConfig.heightSize(context);
 
-    return Container(
-      padding: Responsive.getResponsivePadding(context),
-      margin: EdgeInsets.only(bottom: screenHeight * 0.02),
-      decoration: BoxDecoration(
-        color: accentColor.withOpacity(0.1),
-        borderRadius:
-            BorderRadius.circular(Responsive.getBorderRadius(context)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: Responsive.getNameFontSize(context),
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.filter_list,
-                    color: Theme.of(context).colorScheme.secondary),
-                onPressed: () {
-                  _showFilterDialog(context);
-                },
-              ),
-            ],
+    return Column(
+      children: [
+        SizedBox(
+            width: sizeConfig.widthSize(context),
+            child: const AppSearchButton()),
+        const SizedBox(
+          height: 15,
+        ),
+        Container(
+          padding: Responsive.getResponsivePadding(context),
+          margin: EdgeInsets.only(bottom: screenHeight * 0.02),
+          decoration: BoxDecoration(
+            color: accentColor.withOpacity(0.1),
+            borderRadius:
+                BorderRadius.circular(Responsive.getBorderRadius(context)),
           ),
-          SizedBox(height: screenHeight * 0.01),
-          ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: babysitters.asMap().entries.map((entry) {
-              int index = entry.key;
-              var babysitter = entry.value;
-              return InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const BabysitterProfilePage(
-                        babysitterID: 'samplebabysitter01',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: Responsive.getNameFontSize(context),
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.filter_list,
+                        color: Theme.of(context).colorScheme.secondary),
+                    onPressed: () {
+                      _showFilterDialog(context);
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: babysitters.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  var babysitter = entry.value;
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const BabysitterProfilePage(
+                            babysitterID: 'samplebabysitter01',
+                          ),
+                        ),
+                      );
+                    },
+                    child: BabysitterCard(
+                      name: babysitter['name'],
+                      rate: 'P ${babysitter['rate']}/hr',
+                      rating: babysitter['rating'],
+                      reviews: babysitter['reviews'],
+                      profileImage: babysitter['profileImage'],
+                      heartIcon: IconButton(
+                        icon: Icon(
+                          Icons.favorite,
+                          color: babysitter['liked'] ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () => _toggleLike(index),
                       ),
                     ),
                   );
-                },
-                child: BabysitterCard(
-                  name: babysitter['name'],
-                  rate: 'P ${babysitter['rate']}/hr',
-                  rating: babysitter['rating'],
-                  reviews: babysitter['reviews'],
-                  profileImage: babysitter['profileImage'],
-                  heartIcon: IconButton(
-                    icon: Icon(
-                      Icons.favorite,
-                      color: babysitter['liked'] ? Colors.red : Colors.grey,
-                    ),
-                    onPressed: () => _toggleLike(index),
-                  ),
-                ),
-              );
-            }).toList(),
+                }).toList(),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
