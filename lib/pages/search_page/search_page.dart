@@ -1,3 +1,4 @@
+import 'package:babysitterapp/pages/location/user_view_location.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/models/search_result.dart';
 import 'package:babysitterapp/pages/search_page/widgets/filter_bar_widget.dart';
@@ -24,15 +25,13 @@ class _SearchPageState extends State<SearchPage> {
   bool _noResultsFound = false;
   bool _showFilterBar = true;
 
-  final LatLng userLocation = LatLng(37.7749, -122.4194);
+  final LatLng userLocation = const LatLng(37.7749, -122.4194);
 
   List<SearchResult> _applyFilter(List<SearchResult> results) {
     switch (_selectedFilter) {
-      case 'People':
+      case 'Babysitters':
         return results;
       case 'Near you':
-        return results;
-      case 'Map':
         return results;
       default:
         return results;
@@ -44,19 +43,10 @@ class _SearchPageState extends State<SearchPage> {
       _selectedFilter = filter;
 
       //update the filter widget based on the selected filter
-      if (_selectedFilter == 'People') {
-        _filterWidget = const AllDefaultWidget(
-        );
+      if (_selectedFilter == 'Babysitters') {
+        _filterWidget = const AllDefaultWidget();
       } else if (_selectedFilter == 'Near you') {
-        _filterWidget = NearbyWidget(
-          userLocation: userLocation,
-          babysitters: _allBabysitters,
-        );
-      } else if (_selectedFilter == 'Map') {
-        _filterWidget = MapWidget(
-          userLocation: userLocation,
-          babysitters: _allBabysitters,
-        );
+        _filterWidget = const UserViewLocation();
       } else {
         _filterWidget = Container();
       }
@@ -64,7 +54,6 @@ class _SearchPageState extends State<SearchPage> {
       _searchResults = _applyFilter(_allBabysitters);
     });
   }
-
 
   void _onSearchSubmit(String value) {
     setState(() {
@@ -76,10 +65,10 @@ class _SearchPageState extends State<SearchPage> {
 
         _searchResults = _allBabysitters
             .where((result) =>
-        result.location.toLowerCase().contains(value.toLowerCase()) ||
-            result.bio.toLowerCase().contains(value.toLowerCase()) ||
-            result.skills.any((skill) =>
-                skill.toLowerCase().contains(value.toLowerCase())))
+                result.location.toLowerCase().contains(value.toLowerCase()) ||
+                result.bio.toLowerCase().contains(value.toLowerCase()) ||
+                result.skills.any((skill) =>
+                    skill.toLowerCase().contains(value.toLowerCase())))
             .toList();
 
         _showResults = true;
@@ -97,7 +86,7 @@ class _SearchPageState extends State<SearchPage> {
 
         _searchResults = _allBabysitters
             .where((result) =>
-            result.location.toLowerCase().contains(value.toLowerCase()))
+                result.location.toLowerCase().contains(value.toLowerCase()))
             .toList();
       } else {
         _showAutocomplete = false;
@@ -181,31 +170,29 @@ class _SearchPageState extends State<SearchPage> {
           //   const AllDefaultWidget(),
 
           Expanded(
-            child: _selectedFilter == 'People'
+            child: _selectedFilter == 'Babysitters'
                 ? _filterWidget
                 : _selectedFilter == 'Near you'
-                ? _filterWidget
-                : _selectedFilter == 'Map'
-                ? _filterWidget
-                : _showResults
-                ? SearchResultsWidget(
-              searchResults: _searchResults,
-              onLabelClick: _onLabelClick,
-              noResultsFound: _noResultsFound,
-              type: 'People',
-            )
-                : _showAutocomplete
-                ? AutocompleteWidget(
-              searchResults: _searchResults,
-              onLabelClick: _onLabelClick,
-            )
-                : _searchHistory.isEmpty
-                ? const Center(child: Text('No search yet.'))
-                : DefaultListWidget(
-              searchHistory: _searchHistory,
-              onHistoryItemClick: _onHistoryItemClick,
-              onClearHistory: _clearSearchHistory,
-            ),
+                    ? _filterWidget
+                    : _showResults
+                        ? SearchResultsWidget(
+                            searchResults: _searchResults,
+                            onLabelClick: _onLabelClick,
+                            noResultsFound: _noResultsFound,
+                            type: 'Babysitters',
+                          )
+                        : _showAutocomplete
+                            ? AutocompleteWidget(
+                                searchResults: _searchResults,
+                                onLabelClick: _onLabelClick,
+                              )
+                            : _searchHistory.isEmpty
+                                ? const Center(child: Text('No search yet.'))
+                                : DefaultListWidget(
+                                    searchHistory: _searchHistory,
+                                    onHistoryItemClick: _onHistoryItemClick,
+                                    onClearHistory: _clearSearchHistory,
+                                  ),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 class TermsAndConditionPage extends StatefulWidget {
@@ -9,28 +10,21 @@ class TermsAndConditionPage extends StatefulWidget {
 
 class _TermsAndConditionPageState extends State<TermsAndConditionPage> {
   bool isAgreed = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFB388FF), Color(0xFF7C4DFF)],
-          ),
-        ),
+      backgroundColor: secondaryColor,
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 50),
               const Center(
                 child: Text(
-                  'TERMS AND CONDITION',
+                  'TERMS AND CONDITIONS',
                   style: TextStyle(
                     fontSize: 24,
                     color: Colors.white,
@@ -41,7 +35,10 @@ class _TermsAndConditionPageState extends State<TermsAndConditionPage> {
               const SizedBox(height: 10),
               const Text(
                 'Welcome to the Babysitter Booking App. Please read the following terms and conditions carefully before using our services.',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
               _buildTermsItem('Agreement to Terms',
@@ -55,68 +52,7 @@ class _TermsAndConditionPageState extends State<TermsAndConditionPage> {
               _buildTermsItem('Babysitter Responsibilities',
                   'Babysitters registered on our platform are independent contractors.'),
               _buildTermsItem('Liability',
-                  'We are not liable for any damages, injuries, or losses arising from the use of this app.'),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Checkbox(
-                    value: isAgreed,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isAgreed = value ?? false;
-                      });
-                    },
-                  ),
-                  const Text(
-                    'Agree to the Terms and Condition',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Logic for declining terms and conditions
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text('DECLINE'),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 120,
-                    child: ElevatedButton(
-                      onPressed: isAgreed
-                          ? () {
-                              // Proceed when terms are accepted
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  '/welcome', (Route<dynamic> route) => false);
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text(
-                        'ACCEPT',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
+                  'We are not liable for any damages, injuries, or losses arising from the use of this app.'), // Adjusted height
             ],
           ),
         ),

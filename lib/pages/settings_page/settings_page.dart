@@ -1,15 +1,40 @@
+import 'package:babysitterapp/authentication/terms_page.dart';
 import 'package:babysitterapp/pages/account/account_page.dart';
 import 'package:babysitterapp/pages/help_and_support/help_and_support_page.dart';
-import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
-import 'package:babysitterapp/pages/location/user_view_location.dart';
-import 'package:babysitterapp/pages/payment/payment_page.dart';
-import 'package:babysitterapp/pages/requirement/requirement_page.dart';
-import 'package:babysitterapp/pages/search_page/search_page.dart';
+import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
+import '../../models/user_model.dart';
+import '../../services/current_user_service.dart';
+
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  // call firestore service
+  CurrentUserService firestoreService = CurrentUserService();
+  // get data from firestore using the model
+  UserModel? currentUser;
+
+  // load user data
+  Future<void> _loadUserData() async {
+    final user = await firestoreService.loadUserData();
+    setState(() {
+      currentUser = user;
+    });
+  }
+
+  // initiate load
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,149 +48,169 @@ class SettingsPage extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const SearchPage()));
-            },
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: const BoxDecoration(
-                color: primaryColor,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20)),
-              ),
-              child: Row(
+      body: currentUser == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
                 children: [
-                  ClipOval(
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/profile/digong.jpg'),
-                          fit: BoxFit.cover,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 20),
+                    decoration: const BoxDecoration(
+                      color: primaryColor,
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(20)),
+                    ),
+                    child: Row(
+                      children: [
+                        ClipOval(
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/home-bg.jpg'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // display current user name, email and role
+                            Text(currentUser!.name,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: backgroundColor,
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            Text(
+                              currentUser!.email,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            Text(
+                              currentUser!.role.toUpperCase(),
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: backgroundColor,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            // TextButton(
+                            //   onPressed: () {
+                            //     Navigator.of(context).push(
+                            //       MaterialPageRoute(
+                            //           builder: (context) =>
+                            //               const AccountPage()),
+                            //     );
+                            //   },
+                            //   child: const Text(
+                            //     'View Profile',
+                            //     style: TextStyle(
+                            //       fontSize: 14,
+                            //       color: Colors.orange,
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Digong',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  SettingsSection(
+                    title: 'GENERAL',
+                    items: [
+                      SettingsItem(
+                          icon: Icons.account_box,
+                          label: 'View Profile',
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const AccountPage()));
+                          }),
+                      SettingsItem(
+                          icon: Icons.receipt_long,
+                          label: 'Transaction History',
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const TransactionHistoryPage()));
+                          }),
+                    ],
+                  ),
+                  SettingsSection(
+                    title: 'SUPPORT & TERMS',
+                    items: [
+                      SettingsItem(
+                        icon: Icons.devices,
+                        label: 'Help and Support',
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const HelpAndSupportPage()));
+                        },
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        'digongduterte@gmail.com',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
+                      SettingsItem(
+                        icon: Icons.privacy_tip,
+                        label: 'Terms and Conditions/Privacy Policy',
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const TermsAndConditionPage()));
+                        },
                       ),
-                      SizedBox(height: 4),
-                      // Text(
-                      //   'New Update',
-                      //   style: TextStyle(
-                      //     fontSize: 14,
-                      //     color: Colors.orange,
-                      //   ),
-                      // ),
+                    ],
+                  ),
+                  SettingsSection(
+                    title: 'Account',
+                    items: [
+                      // log out user
+                      SettingsItem(
+                        label: 'Log Out',
+                        icon: Icons.logout,
+                        onTap: () async {
+                          bool? confirmLogout = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Log Out"),
+                                content: const Text(
+                                    "Are you sure you want to log out?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          false); // User canceled the logout
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          true); // User confirmed the logout
+                                    },
+                                    child: const Text("Log Out"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmLogout == true) {
+                            await firestoreService.signOutUser();
+                            Navigator.of(context).pushNamed("/login");
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            SettingsSection(
-              title: 'GENERAL',
-              items: [
-                SettingsItem(
-                    icon: Icons.check,
-                    label: 'Get Verified',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const Reqpage()),
-                      );
-                    }),
-                SettingsItem(
-                    icon: Icons.notifications,
-                    label: 'Notifications',
-                    onTap: () {}),
-                SettingsItem(
-                    icon: Icons.receipt_long,
-                    label: 'Transaction History',
-                    onTap: () {}),
-                SettingsItem(
-                    icon: Icons.account_circle,
-                    label: 'Account',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const AccountPage()),
-                      );
-                    }),
-                SettingsItem(
-                    icon: Icons.payment,
-                    label: 'Payment',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const PaymentPage()),
-                      );
-                    }),
-                SettingsItem(
-                    icon: Icons.location_on,
-                    label: 'Location',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const UserViewLocation()),
-                      );
-                    }),
-              ],
-            ),
-            SettingsSection(
-              title: 'SUPPORT & TERMS',
-              items: [
-                SettingsItem(
-                  icon: Icons.devices,
-                  label: 'Help and Support',
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const HelpAndSupportPage()));
-                  },
-                ),
-                SettingsItem(
-                  icon: Icons.privacy_tip,
-                  label: 'Terms and Conditions/Privacy Policy',
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const SettingsSection(
-              title: 'NOTIFICATIONS',
-              items: [
-                SettingsSwitchItem(label: 'Notifications'),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -44,11 +44,11 @@ class _AvailabilityPageState extends State<AvailabilityPage> {
     });
   }
 
-  void _clearAvailability() {
-    setState(() {
-      _availability.clear();
-    });
-  }
+  // void _clearAvailability() {
+  //   setState(() {
+  //     _availability.clear();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

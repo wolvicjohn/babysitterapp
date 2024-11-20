@@ -1,5 +1,5 @@
 import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/services/firestore_service.dart';
+import 'package:babysitterapp/services/current_user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/utils/authentication.dart';
@@ -18,12 +18,13 @@ class BabySitterRegisterPage extends StatefulWidget {
 class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   // call database
-  FirestoreService firestoreService = FirestoreService();
+  CurrentUserService firestoreService = CurrentUserService();
 
   // Form fields
   String? _email;
   String? _password;
   String? fullName;
+  // ignore: unused_field
   String? _confirmPassword;
   String? _phoneNumber;
   String? _selectedRole;
@@ -61,8 +62,12 @@ class _BabySitterRegisterPageState extends State<BabySitterRegisterPage> {
   Future<void> _createFirebaseUser() async {
     _showLoadingDialog();
     try {
-      await firestoreService.addUser(
-          _email, _password, fullName, _selectedRole, _phoneNumber);
+      await firestoreService.registerUser(
+          email: _email!,
+          password: _password!,
+          name: fullName!,
+          role: _selectedRole!,
+          phone: _phoneNumber!);
       _onRegistrationSuccess();
     } on FirebaseAuthException catch (e) {
       _handleAuthError(e);

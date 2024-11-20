@@ -1,26 +1,39 @@
+import 'package:babysitterapp/pages/confirmation/confirmpage.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+  final String babysitterImage;
+  final String babysitterName;
+  final String specialRequirements;
+  final String duration;
+  String? paymentMode;
+  final String totalpayment;
+  final double babysitterRate;
+  PaymentPage(
+      {super.key,
+      required this.babysitterImage,
+      required this.babysitterName,
+      required this.specialRequirements,
+      required this.duration,
+      required this.paymentMode,
+      required this.totalpayment,
+      required this.babysitterRate});
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  String? _selectedPaymentMethod;
-  final _formKey = GlobalKey<FormState>();
-  final _amountController = TextEditingController();
-
   // Function to show confirmation dialog
   Future<void> _showConfirmationDialog(VoidCallback onConfirm) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Payment'),
-          content:
-              const Text('Are you sure you want to proceed with the payment?'),
+          title: const Text('Confirm Payment Method'),
+          content: const Text(
+              'Are you sure you want to proceed with this payment method?'),
           actions: <Widget>[
             TextButton(
               child:
@@ -42,61 +55,47 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // Navigate to Success Screen
-  void _navigateToSuccessScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const SuccessScreen(),
-      ),
-    );
-  }
-
   // Payment functions
   void _payWithGCash() {
-    if (_amountController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter an amount for GPay')),
-      );
-      return;
-    }
-
     _showConfirmationDialog(() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing payment with GPay...')),
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ConfirmationPage(
+            babysitterImage: widget.babysitterImage,
+            babysitterName: widget.babysitterName,
+            specialRequirements: widget.specialRequirements,
+            paymentMode: widget.paymentMode!,
+            duration: widget.duration.toString(),
+            totalpayment: widget.totalpayment,
+            babysitterRate: widget.babysitterRate,
+          ),
+        ),
       );
-      Future.delayed(const Duration(seconds: 2), () {
-        _navigateToSuccessScreen();
-      });
     });
   }
 
   void _payWithDirectPay() {
     _showConfirmationDialog(() {
-      _navigateToSuccessScreen();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ConfirmationPage(
+            babysitterImage: widget.babysitterImage,
+            babysitterName: widget.babysitterName,
+            specialRequirements: widget.specialRequirements,
+            paymentMode: widget.paymentMode!,
+            duration: widget.duration.toString(),
+            totalpayment: widget.totalpayment,
+            babysitterRate: widget.babysitterRate,
+          ),
+        ),
+      );
     });
-  }
-
-  void _payWithCreditCard() {
-    if (_formKey.currentState?.validate() ?? false) {
-      _showConfirmationDialog(() {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Processing payment with Credit Card...')),
-        );
-        Future.delayed(const Duration(seconds: 2), () {
-          _navigateToSuccessScreen();
-        });
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Payment', style: TextStyle(fontFamily: 'Poppins')),
-        backgroundColor: Colors.deepPurple,
-      ),
+      appBar: AppBar(title: const Text('Payment Method')),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -123,13 +122,14 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                   children: [
                     _buildPaymentOption(
-                      label: 'GPay',
+                      label: 'GCash',
                       iconPath:
-                          'assets/images/gpay.png', // Update path as needed
+                          'assets/images/gcash.png', // Update path as needed
                       onTap: () {
                         setState(() {
-                          _selectedPaymentMethod = 'GPay';
+                          widget.paymentMode = 'GCash';
                         });
+                        _payWithGCash();
                       },
                     ),
                     _buildPaymentOption(
@@ -138,76 +138,13 @@ class _PaymentPageState extends State<PaymentPage> {
                           'assets/images/cua.png', // Update path as needed
                       onTap: () {
                         setState(() {
-                          _selectedPaymentMethod = 'Direct Pay';
+                          widget.paymentMode = 'Direct Pay';
                         });
                         _payWithDirectPay();
                       },
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-
-                // GPay Amount Field
-                if (_selectedPaymentMethod == 'GPay')
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextFormField(
-                      controller: _amountController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Amount',
-                        prefixIcon: const Icon(Icons.attach_money),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-
-                // Payment Form (only for Credit Card)
-                if (_selectedPaymentMethod == 'Credit Card')
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        _buildTextField(
-                          label: 'Card Number',
-                          icon: Icons.credit_card,
-                          keyboardType: TextInputType.number,
-                          validatorMessage: 'Please enter your card number',
-                        ),
-                        const SizedBox(height: 15),
-                        _buildTextField(
-                          label: 'Expiry Date',
-                          icon: Icons.calendar_today,
-                          keyboardType: TextInputType.datetime,
-                          validatorMessage: 'Please enter the expiry date',
-                        ),
-                        const SizedBox(height: 15),
-                        _buildTextField(
-                          label: 'CVV',
-                          icon: Icons.lock,
-                          keyboardType: TextInputType.number,
-                          validatorMessage: 'Please enter the CVV',
-                          obscureText: true,
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton.icon(
-                          onPressed: _payWithCreditCard,
-                          icon: const Icon(Icons.credit_card),
-                          label: const Text('Pay with Credit Card'),
-                          style: _elevatedButtonStyle(),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                // Pay Button for GPay
-                if (_selectedPaymentMethod == 'GPay')
-                  ElevatedButton(
-                    onPressed: _payWithGCash,
-                    child: const Text('Pay with GPay'),
-                    style: _elevatedButtonStyle(),
-                  ),
               ],
             ),
           ),
@@ -246,41 +183,6 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
     );
   }
-
-  ButtonStyle _elevatedButtonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: Colors.deepPurple,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 5,
-      textStyle: const TextStyle(fontFamily: 'Poppins'),
-    );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-    required String validatorMessage,
-    bool obscureText = false,
-  }) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-      ),
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return validatorMessage;
-        }
-        return null;
-      },
-    );
-  }
 }
 
 // Success Screen
@@ -291,8 +193,7 @@ class SuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Payment Success',
-            style: TextStyle(fontFamily: 'Poppins')),
+        title: const Text('Payment Success'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -300,23 +201,20 @@ class SuccessScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(Icons.check_circle, color: Colors.deepPurple, size: 80),
             SizedBox(height: 20),
             Text(
               'Congratulations!',
-              style: TextStyle(
-                  fontSize: 24,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Text(
               'You have successfully paid.',
-              style: TextStyle(fontSize: 18, fontFamily: 'Poppins'),
+              style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
           ],

@@ -13,7 +13,7 @@ class FilterBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filters = ['People', 'Near you', 'Map'];
+    final filters = ['Babysitters', 'Near you'];
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SingleChildScrollView(
@@ -32,7 +32,8 @@ class FilterBarWidget extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
                 child: GestureDetector(
                   onTap: () {
                     onFilterChanged(filter);
@@ -40,7 +41,9 @@ class FilterBarWidget extends StatelessWidget {
                   child: Text(
                     filter,
                     style: TextStyle(
-                      color: selectedFilter == filter ? Colors.white : Colors.black,
+                      color: selectedFilter == filter
+                          ? Colors.white
+                          : Colors.black,
                     ),
                   ),
                 ),
