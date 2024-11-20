@@ -1,4 +1,3 @@
-
 import 'package:babysitterapp/authentication/forgot_password_page.dart';
 
 import 'package:babysitterapp/authentication/check_auth_page.dart';
