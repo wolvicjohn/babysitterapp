@@ -44,8 +44,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
             context, RouteAnimate(0.0, 1.0, page: const ChatPage()));
         break;
       case 2:
-        await Navigator.push(context,
-            RouteAnimate(0, 1.0, page: const BabysitterViewLocation()));
+        await Navigator.push(
+            context,
+            RouteAnimate(0, 1.0,
+                page: BabysitterViewLocation(
+                  selectedBabysitterName: "Emma Gill",
+                )));
         break;
       case 3:
         await Navigator.push(

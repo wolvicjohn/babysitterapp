@@ -1,9 +1,8 @@
 import 'package:babysitterapp/authentication/terms_condition.dart';
 import 'package:babysitterapp/pages/homepage/home_page.dart';
-import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/components/button.dart';
 import 'package:flutter/material.dart';
-import 'booking_service.dart';
+import '../../services/booking_service.dart';
 
 class ConfirmationPage extends StatelessWidget {
   final String babysitterImage;

@@ -1,6 +1,6 @@
-import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/pages/location/location_page.dart';
 import 'package:babysitterapp/pages/requirement/requirement_page.dart';
-import 'package:babysitterapp/services/firestore_service.dart';
+import 'package:babysitterapp/services/current_user_service.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,7 +18,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   // call firestore service
-  FirestoreService firestoreService = FirestoreService();
+  CurrentUserService firestoreService = CurrentUserService();
   // get data from firestore using the model
   UserModel? currentUser;
   // location variable for Geopointing
@@ -213,6 +213,29 @@ class _AccountPageState extends State<AccountPage> {
                       enabled: false,
                     ),
                     const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        // Profile field takes majority of the space
+                        Expanded(
+                          child: _buildProfileField(
+                              label: "Address",
+                              initialValue: currentUser!.address,
+                              onSaved: (value) => currentUser!.address = value,
+                              validator: (value) => value == null
+                                  ? 'Please set your address'
+                                  : null,
+                              enabled: _isEditing),
+                        ),
+                        const SizedBox(
+                            width:
+                                8), // Add spacing between the field and the button
+                        // Location button with intrinsic size
+                        _buildLocationButton(),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
                     // select gender
                     _buildGenderDropdown(),
                     const SizedBox(height: 20),
@@ -303,9 +326,19 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Widget _buildLocationButton() {
-    return AppButton(
-      text: "Get Location",
-      onPressed: () {},
+    return IconButton(
+      icon: const Icon(
+        Icons.edit_location_alt_outlined,
+        size: 30,
+      ),
+      onPressed: _isEditing
+          ? () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Location()),
+              );
+            }
+          : null, // Disables the button when _isEditing is false
     );
   }
 

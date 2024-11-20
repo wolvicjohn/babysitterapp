@@ -24,8 +24,6 @@ class TransactionInfoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction Details'),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -85,6 +83,7 @@ class TransactionInfoPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       Text(
                         'Transaction Successful',
+                        textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
@@ -101,12 +100,12 @@ class TransactionInfoPage extends StatelessWidget {
                       _detailRow('Special Requirements:', specialRequirements,
                           context),
                       const SizedBox(height: 10),
-                      _detailRow(
-                          'Duration:', _cleanDuration(duration), context),
+                      _detailRow('Duration:',
+                          '${_cleanDuration(duration)} hours', context),
                       const SizedBox(height: 10),
                       _detailRow('Payment Mode:', paymentMode, context),
                       const SizedBox(height: 10),
-                      _detailRow('Total Payment:', totalPayment, context),
+                      _detailRow('Total Payment:', 'P$totalPayment', context),
                       // const SizedBox(height: 10),
                       // _detailRow('Babysitter Offer:', babysitterRate.toString(), context),
                       const SizedBox(height: 30),
@@ -162,14 +161,23 @@ class TransactionInfoPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge
-              ?.copyWith(fontWeight: FontWeight.bold),
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
         ),
-        Text(value),
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
       ],
     );
   }

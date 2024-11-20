@@ -1,9 +1,9 @@
 // transaction history page
 
+import 'package:babysitterapp/services/booking_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../styles/colors.dart';
 import 'transactioninfopage.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
@@ -11,17 +11,15 @@ class TransactionHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // call bookings service
+    final BookingService bookingService = BookingService();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('bookings')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
+        stream: bookingService.getUserBookings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

@@ -6,16 +6,16 @@ class BookingService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Method to get bookings for the logged-in user
-  Stream<List<Map<String, dynamic>>> getUserBookings() {
-    return _auth.currentUser != null
-        ? _firestore
-            .collection('bookings')
-            .where('userEmail', isEqualTo: _auth.currentUser!.email)
-            .orderBy('createdAt',
-                descending: true) // Optional: order by creation date
-            .snapshots()
-            .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList())
-        : Stream.value([]); // If no user is logged in, return an empty list
+  Stream<QuerySnapshot> getUserBookings() {
+    if (_auth.currentUser == null) {
+      return const Stream.empty();
+    }
+
+    return _firestore
+        .collection('bookings')
+        .where('userEmail', isEqualTo: _auth.currentUser!.email)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 
   // Method to save booking details in Firestore

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,14 +7,14 @@ class Authentication {
   static Future<FirebaseApp> initializeFirebase(
       {required BuildContext context}) async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
-    User? user = FirebaseAuth.instance.currentUser;
+    // User? user = FirebaseAuth.instance.currentUser;
 
     return firebaseApp;
   }
 
   static bool isEmailValid(User? user) {
-    bool notVisitor = user?.email?.contains('@dnsc.edu.ph') == true ?? false;
-    return notVisitor && user?.emailVerified != null ?? false;
+    bool notVisitor = user?.email?.contains('@dnsc.edu.ph') == true;
+    return notVisitor && user?.emailVerified != null;
   }
 
   static Future<User?> signInWithGoogle({required BuildContext context}) async {

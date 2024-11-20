@@ -1,8 +1,7 @@
-import 'package:babysitterapp/components/button.dart';
-import 'package:babysitterapp/pages/booking/requestpage.dart';
 import 'package:babysitterapp/pages/confirmation/confirmpage.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class PaymentPage extends StatefulWidget {
   final String babysitterImage;
   final String babysitterName;
@@ -56,15 +55,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // Navigate to Success Screen
-  void _navigateToSuccessScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const SuccessScreen(),
-      ),
-    );
-  }
-
   // Payment functions
   void _payWithGCash() {
     _showConfirmationDialog(() {
@@ -105,10 +95,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Payment', style: TextStyle(fontFamily: 'Poppins')),
-        backgroundColor: Colors.deepPurple,
-      ),
+      appBar: AppBar(title: const Text('Payment Method')),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(

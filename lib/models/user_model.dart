@@ -10,7 +10,8 @@ class UserModel {
   // added later for accounts page
   String? img;
   String? gender;
-  GeoPoint? address;
+  GeoPoint? location;
+  String? address;
   String? information;
   DateTime? age;
 
@@ -29,6 +30,7 @@ class UserModel {
     required this.phone,
     this.img,
     this.gender,
+    this.location,
     this.address,
     this.information,
     this.age,
@@ -47,7 +49,8 @@ class UserModel {
       'phone': phone,
       'img': img ?? '',
       'gender': gender ?? 'Select Gender',
-      'address': address ?? const GeoPoint(0, 0),
+      'location': location ?? const GeoPoint(0, 0),
+      'address': address ?? '',
       'information': information ?? 'No information provided',
       'age': age ?? DateTime(2000, 1, 1),
       'childAge': childAge ?? 0,
@@ -66,6 +69,7 @@ class UserModel {
       phone: map['phone'] ?? '',
       img: map['img'],
       gender: map['gender'],
+      location: map['location'],
       address: map['address'],
       information: map['information'],
       age: map['age']?.toDate(), // Convert Timestamp to DateTime
@@ -73,6 +77,41 @@ class UserModel {
       experience: map['experience'],
       rating: map['rating']?.toDouble(),
       rate: map['rate']?.toDouble(),
+    );
+  }
+
+  // Add copyWith method
+  UserModel copyWith({
+    String? role,
+    String? email,
+    String? name,
+    String? phone,
+    String? img,
+    String? gender,
+    GeoPoint? location,
+    String? address,
+    String? information,
+    DateTime? age,
+    int? childAge,
+    List? experience,
+    double? rating,
+    double? rate,
+  }) {
+    return UserModel(
+      role: role ?? this.role,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      img: img ?? this.img,
+      gender: gender ?? this.gender,
+      location: location ?? this.location,
+      address: address ?? this.address,
+      information: information ?? this.information,
+      age: age ?? this.age,
+      childAge: childAge ?? this.childAge,
+      experience: experience ?? this.experience,
+      rating: rating ?? this.rating,
+      rate: rate ?? this.rate,
     );
   }
 }

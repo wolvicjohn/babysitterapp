@@ -1,9 +1,13 @@
 import 'package:babysitterapp/components/button.dart';
+import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/size.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../models/user_model.dart';
+import '../../services/current_user_service.dart';
 import '../../services/location_service.dart';
 
 class SetLocation extends StatefulWidget {
@@ -14,6 +18,10 @@ class SetLocation extends StatefulWidget {
 }
 
 class _SetLocationState extends State<SetLocation> {
+  // call firestore service
+  CurrentUserService firestoreService = CurrentUserService();
+  // get data from firestore using the model
+  UserModel? currentUser;
   LocationService locationService = LocationService();
 
   double latitude = 0;
@@ -28,6 +36,47 @@ class _SetLocationState extends State<SetLocation> {
   void initState() {
     super.initState();
     mapController = MapController();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    currentUser = await firestoreService.loadUserData();
+    setState(() {});
+  }
+
+  // save new data when save is clicked
+  Future<void> _saveUserData() async {
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User data is not available.')),
+      );
+      return; // Early exit if no user data is found.
+    }
+
+    try {
+      // Save latitude and longitude to the 'address' field
+      currentUser =
+          currentUser!.copyWith(location: GeoPoint(latitude, longitude));
+
+      // Get a human-readable address
+      final readableAddress = await locationService.getAddressFromCoordinates(
+        LatLng(latitude, longitude),
+      );
+
+      // Save human-readable address to the 'location' field
+      currentUser = currentUser!.copyWith(address: readableAddress);
+
+      // Save updated data to Firestore
+      await firestoreService.saveUserData(currentUser!);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location updated successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating location: $e')),
+      );
+    }
   }
 
   @override
@@ -35,12 +84,16 @@ class _SetLocationState extends State<SetLocation> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.deepPurple),
-          onPressed: () => Navigator.pop(context),
-        ),
+        title: const Text("Set Location"),
+        actions: [
+          TextButton(
+            onPressed: _saveUserData,
+            child: const Text(
+              'Save',
+              style: TextStyle(color: backgroundColor),
+            ),
+          ),
+        ],
       ),
       body: SizedBox(
         height: sizeConfig.heightSize(context),
@@ -85,37 +138,18 @@ class _SetLocationState extends State<SetLocation> {
               ],
             ),
             Positioned(
-              bottom: 30,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: sizeConfig.widthSize(context),
-                  height: 50,
-                  child: FutureBuilder(
-                    future: locationService
-                        .getAddressFromCoordinates(LatLng(latitude, longitude)),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text('Loading...');
-                      }
-                      return Text(snapshot.data.toString());
-                    },
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
               bottom: 15,
               left: 0,
               right: 0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  AppButton(
-                    text: "Use Location",
-                    onPressed: _getUserLocation,
+                  SizedBox(
+                    width: 320,
+                    child: AppButton(
+                      text: "Set Location",
+                      onPressed: _getUserLocation,
+                    ),
                   ),
                 ],
               ),
@@ -134,33 +168,5 @@ class _SetLocationState extends State<SetLocation> {
       longitude = pos.longitude;
       mapController.move(LatLng(latitude, longitude), 14);
     });
-    _showSuccessDialog();
-  }
-
-  // show dialog after tagging location
-  Future<void> _showSuccessDialog() async {
-    await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text(
-          "Success!",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-        ),
-        content: const Text(
-          "Your location has been set!",
-          style: TextStyle(fontSize: 15, height: 1.5),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text(
-              'Done',
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

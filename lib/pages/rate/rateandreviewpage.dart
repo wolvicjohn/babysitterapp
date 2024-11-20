@@ -92,8 +92,6 @@ class _RateAndReviewPageState extends State<RateAndReviewPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rate Babysitter'),
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
       ),
       body: (babysitter != null)
           ? Center(

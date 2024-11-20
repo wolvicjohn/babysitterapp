@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../styles/colors.dart';
 
 class TimeSelector extends StatefulWidget {
-  final Function(double) onDurationChanged; 
+  final Function(double) onDurationChanged;
 
   const TimeSelector({
     super.key,
@@ -14,7 +13,7 @@ class TimeSelector extends StatefulWidget {
 }
 
 class _TimeSelectorState extends State<TimeSelector> {
-  double _selectedHours = 1; 
+  double _selectedHours = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +46,14 @@ class _TimeSelectorState extends State<TimeSelector> {
             value: _selectedHours,
             min: 1,
             max: 12,
-            divisions: 11, 
-            label: "${_selectedHours.toInt()} hr${_selectedHours > 1 ? 's' : ''}",
+            divisions: 11,
+            label:
+                "${_selectedHours.toInt()} hr${_selectedHours > 1 ? 's' : ''}",
             onChanged: (double value) {
               setState(() {
                 _selectedHours = value;
-                widget.onDurationChanged(_selectedHours); // Pass the selected duration to the parent
+                widget.onDurationChanged(
+                    _selectedHours); // Pass the selected duration to the parent
               });
             },
           ),

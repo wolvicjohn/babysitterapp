@@ -1,18 +1,12 @@
-import 'package:babysitterapp/authentication/terms_condition.dart';
 import 'package:babysitterapp/authentication/terms_page.dart';
-import 'package:babysitterapp/components/bottom_navigation_bar.dart';
 import 'package:babysitterapp/pages/account/account_page.dart';
 import 'package:babysitterapp/pages/help_and_support/help_and_support_page.dart';
-import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
-import 'package:babysitterapp/pages/location/user_view_location.dart';
-import 'package:babysitterapp/pages/payment/payment_page.dart';
-import 'package:babysitterapp/pages/requirement/requirement_page.dart';
-import 'package:babysitterapp/pages/search_page/search_page.dart';
+import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/user_model.dart';
-import '../../services/firestore_service.dart';
+import '../../services/current_user_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -23,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   // call firestore service
-  FirestoreService firestoreService = FirestoreService();
+  CurrentUserService firestoreService = CurrentUserService();
   // get data from firestore using the model
   UserModel? currentUser;
 
@@ -61,7 +55,8 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 20),
                     decoration: const BoxDecoration(
                       color: primaryColor,
                       borderRadius:
@@ -106,22 +101,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                   color: backgroundColor,
                                   fontWeight: FontWeight.w600),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const AccountPage()),
-                                );
-                              },
-                              child: const Text(
-                                'View Profile',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.orange,
-                                ),
-                              ),
-                            ),
+                            // TextButton(
+                            //   onPressed: () {
+                            //     Navigator.of(context).push(
+                            //       MaterialPageRoute(
+                            //           builder: (context) =>
+                            //               const AccountPage()),
+                            //     );
+                            //   },
+                            //   child: const Text(
+                            //     'View Profile',
+                            //     style: TextStyle(
+                            //       fontSize: 14,
+                            //       color: Colors.orange,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ],
@@ -131,9 +126,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: 'GENERAL',
                     items: [
                       SettingsItem(
+                          icon: Icons.account_box,
+                          label: 'View Profile',
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const AccountPage()));
+                          }),
+                      SettingsItem(
                           icon: Icons.receipt_long,
                           label: 'Transaction History',
-                          onTap: () {}),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const TransactionHistoryPage()));
+                          }),
                     ],
                   ),
                   SettingsSection(
@@ -160,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   ),
                   SettingsSection(
-                    title: 'Login',
+                    title: 'Account',
                     items: [
                       // log out user
                       SettingsItem(

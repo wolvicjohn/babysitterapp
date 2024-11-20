@@ -1,12 +1,9 @@
 import 'package:babysitterapp/components/bottom_navigation_bar.dart';
+import 'package:babysitterapp/components/loading_screen.dart';
 import 'package:babysitterapp/components/search_button.dart';
-import 'package:babysitterapp/pages/chat/chatpage.dart';
 import 'package:babysitterapp/pages/homepage/babysitter_card.dart';
 import 'package:babysitterapp/pages/homepage/notification_page.dart';
-import 'package:babysitterapp/pages/location/babysitter_view_location.dart';
 import 'package:babysitterapp/pages/profile/babysitterprofilepage.dart';
-import 'package:babysitterapp/pages/search_page/widgets/index.dart';
-import 'package:babysitterapp/pages/settings_page/settings_page.dart';
 import 'package:babysitterapp/pages/transaction/transaction_history_page.dart';
 import 'package:babysitterapp/styles/colors.dart';
 import 'package:babysitterapp/styles/responsive.dart';
@@ -14,7 +11,7 @@ import 'package:babysitterapp/styles/size.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/user_model.dart';
-import '../../services/firestore_service.dart';
+import '../../services/current_user_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // call firestore service
-  FirestoreService firestoreService = FirestoreService();
+  CurrentUserService firestoreService = CurrentUserService();
   // get data from firestore using the model
   UserModel? currentUser;
 
@@ -168,9 +165,7 @@ class _HomePageState extends State<HomePage> {
     final double screenHeight = sizeConfig.heightSize(context);
 
     return currentUser == null
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
+        ? const LoadingScreen()
         : Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
