@@ -13,7 +13,7 @@ class FilterBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filters = ['Babysitters', 'Near you'];
+    final filters = ['Near you', 'Babysitter rates', 'Babysitters'];
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SingleChildScrollView(
