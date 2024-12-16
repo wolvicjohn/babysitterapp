@@ -34,26 +34,26 @@ List<FAQ> faqData = [
     question: "What safety measures are in place for my child?",
     answer: "Babysitters are required to adhere to strict safety guidelines, including first-aid certification. You can also communicate with your babysitter through the in-app messaging system during the booking.",
   ),
-  FAQ(
-    question: "How do I sign up as a babysitter?",
-    answer: "Download the app and click 'Sign Up.' You’ll be prompted to enter your details, verify your identity, and undergo a background check before completing your profile.",
-  ),
-  FAQ(
-    question: "How do I get paid?",
-    answer: "Payments are automatically transferred to your linked bank account or digital wallet after a babysitting job is completed. Processing times may vary depending on your payment method.",
-  ),
-  FAQ(
-    question: "How do I set my availability?",
-    answer: "You can set your availability through the calendar in the app. Be sure to update it regularly to avoid conflicts with bookings.",
-  ),
-  FAQ(
-    question: "What happens if I can’t make it to a booking?",
-    answer: "If you need to cancel, notify the parent as soon as possible through the app. Frequent cancellations can affect your rating and opportunities for future bookings.",
-  ),
-  FAQ(
-    question: "What should I do if there's an emergency while babysitting?",
-    answer: "In case of an emergency, contact the parent immediately through the in-app messaging or call them. Follow the app’s emergency protocol and consider calling local emergency services if needed.",
-  ),
+  // FAQ(
+  //   question: "How do I sign up as a babysitter?",
+  //   answer: "Download the app and click 'Sign Up.' You’ll be prompted to enter your details, verify your identity, and undergo a background check before completing your profile.",
+  // ),
+  // FAQ(
+  //   question: "How do I get paid?",
+  //   answer: "Payments are automatically transferred to your linked bank account or digital wallet after a babysitting job is completed. Processing times may vary depending on your payment method.",
+  // ),
+  // FAQ(
+  //   question: "How do I set my availability?",
+  //   answer: "You can set your availability through the calendar in the app. Be sure to update it regularly to avoid conflicts with bookings.",
+  // ),
+  // FAQ(
+  //   question: "What happens if I can’t make it to a booking?",
+  //   answer: "If you need to cancel, notify the parent as soon as possible through the app. Frequent cancellations can affect your rating and opportunities for future bookings.",
+  // ),
+  // FAQ(
+  //   question: "What should I do if there's an emergency while babysitting?",
+  //   answer: "In case of an emergency, contact the parent immediately through the in-app messaging or call them. Follow the app’s emergency protocol and consider calling local emergency services if needed.",
+  // ),
   FAQ(
     question: "Can I decline a booking?",
     answer: "Yes, you can review the booking request and choose to accept or decline it based on your availability and preferences.",
