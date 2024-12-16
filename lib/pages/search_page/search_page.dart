@@ -1,4 +1,5 @@
 import 'package:babysitterapp/pages/location/user_view_location.dart';
+import 'package:babysitterapp/pages/search_page/widgets/rates_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:babysitterapp/models/search_result.dart';
 import 'package:babysitterapp/pages/search_page/widgets/filter_bar_widget.dart';
@@ -18,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
   final List<String> _searchHistory = [];
   final List<SearchResult> _allBabysitters = SearchResult.fetchBabysitters();
   List<SearchResult> _searchResults = [];
-  String _selectedFilter = '';
+  String _selectedFilter = 'Near you';
 
   bool _showAutocomplete = false;
   bool _showResults = false;
@@ -29,9 +30,11 @@ class _SearchPageState extends State<SearchPage> {
 
   List<SearchResult> _applyFilter(List<SearchResult> results) {
     switch (_selectedFilter) {
-      case 'Babysitters':
-        return results;
       case 'Near you':
+        return results;
+      case 'Babysitter rates':
+        return results;
+      case 'Babysitters':
         return results;
       default:
         return results;
@@ -43,10 +46,12 @@ class _SearchPageState extends State<SearchPage> {
       _selectedFilter = filter;
 
       //update the filter widget based on the selected filter
-      if (_selectedFilter == 'Babysitters') {
-        _filterWidget = const AllDefaultWidget();
-      } else if (_selectedFilter == 'Near you') {
+      if (_selectedFilter == 'Near you') {
         _filterWidget = const UserViewLocation();
+      } else if (_selectedFilter == 'Babysitter rates') {
+        _filterWidget = const RatesWidget();
+      } else if (_selectedFilter == 'Babysitters') {
+        _filterWidget = const AllDefaultWidget();
       } else {
         _filterWidget = Container();
       }
@@ -91,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
       } else {
         _showAutocomplete = false;
         _showFilterBar = true;
-        _filterWidget = Container(); //widget is hidden when there's no input
+        _filterWidget = const UserViewLocation();
       }
     });
   }
@@ -169,31 +174,59 @@ class _SearchPageState extends State<SearchPage> {
           // if (!isSearching)
           //   const AllDefaultWidget(),
 
+          // Expanded(
+          //   child: _selectedFilter == 'Babysitters'
+          //       ? _filterWidget
+          //       : _selectedFilter == 'Near you'
+          //           ? _filterWidget
+          //           : _showResults
+          //               ? SearchResultsWidget(
+          //                   searchResults: _searchResults,
+          //                   onLabelClick: _onLabelClick,
+          //                   noResultsFound: _noResultsFound,
+          //                   type: 'Near you',
+          //                 )
+          //               : _showAutocomplete
+          //                   ? AutocompleteWidget(
+          //                       searchResults: _searchResults,
+          //                       onLabelClick: _onLabelClick,
+          //                     )
+          //                   : _searchHistory.isEmpty
+          //                       ? const Center(child: Text('No search yet.'))
+          //                       : DefaultListWidget(
+          //                           searchHistory: _searchHistory,
+          //                           onHistoryItemClick: _onHistoryItemClick,
+          //                           onClearHistory: _clearSearchHistory,
+          //                         ),
+          // ),
+
           Expanded(
             child: _selectedFilter == 'Babysitters'
                 ? _filterWidget
                 : _selectedFilter == 'Near you'
-                    ? _filterWidget
-                    : _showResults
-                        ? SearchResultsWidget(
-                            searchResults: _searchResults,
-                            onLabelClick: _onLabelClick,
-                            noResultsFound: _noResultsFound,
-                            type: 'Babysitters',
-                          )
-                        : _showAutocomplete
-                            ? AutocompleteWidget(
-                                searchResults: _searchResults,
-                                onLabelClick: _onLabelClick,
-                              )
-                            : _searchHistory.isEmpty
-                                ? const Center(child: Text('No search yet.'))
-                                : DefaultListWidget(
-                                    searchHistory: _searchHistory,
-                                    onHistoryItemClick: _onHistoryItemClick,
-                                    onClearHistory: _clearSearchHistory,
-                                  ),
-          ),
+                ? _filterWidget
+                : _selectedFilter == 'Babysitter rates'
+                ? _filterWidget
+                : _showResults
+                ? SearchResultsWidget(
+              searchResults: _searchResults,
+              onLabelClick: _onLabelClick,
+              noResultsFound: _noResultsFound,
+              type: _selectedFilter,
+            )
+                : _showAutocomplete
+                ? AutocompleteWidget(
+              searchResults: _searchResults,
+              onLabelClick: _onLabelClick,
+            )
+                : _searchHistory.isEmpty
+                ? const Center(child: Text('No search yet.'))
+                : DefaultListWidget(
+              searchHistory: _searchHistory,
+              onHistoryItemClick: _onHistoryItemClick,
+              onClearHistory: _clearSearchHistory,
+            ),
+          )
         ],
       ),
     );
