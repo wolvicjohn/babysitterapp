@@ -580,14 +580,26 @@ class _UserViewLocationState extends State<UserViewLocation> {
 
   // Map markers
   Widget _buildMarkers() {
+    final Distance distance = Distance();
+
     return MarkerLayer(
       markers: babysitters.map((babysitter) {
         final location = babysitter['location'];
         if (location == null) {
           return Marker(point: const LatLng(0, 0), child: Container());
         }
+
+        //calculate the distance in kilometers
+        final babysitterLocation = LatLng(location.latitude, location.longitude);
+        final distanceInKm = distance.as(LengthUnit.Kilometer, center, babysitterLocation);
+
+        //check if within the radius
+        if (distanceInKm > _circleRadiusInKm) {
+          return Marker(point: const LatLng(0, 0), child: Container());
+        }
+
         return Marker(
-          point: LatLng(location.latitude, location.longitude),
+          point: babysitterLocation,
           width: 100,
           height: 80,
           child: GestureDetector(
